@@ -1,0 +1,7 @@
+node_modules
+dist
+.DS_Store
+*.local
+
+# Full HEAP extract — licensed data, local only (public builds use src/data/heap/sample/)
+src/data/heap/full/
