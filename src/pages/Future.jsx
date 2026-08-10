@@ -10,12 +10,14 @@ import signpostImg from '../assets/my-future-signpost.png'
 import { subjectByName, coursesForSubject, titleCase, subjectSlug, splitList } from '../data/heap'
 import { student, signals, suggestedLean, loadDirection, saveDirection } from '../data/student'
 
+import { careerBySlug } from '../data/careers'
+
 const CAREERS = [
-  { title: 'Arborist/Tree Surgeon', pill: 'Favourited', reason: 'You favourited this career', blurb: 'Demand for experienced workers has risen due to greater public interest in the environment.' },
-  { title: 'Museum Curator', pill: 'New match', reason: 'Linked to your Archaeology interest', blurb: 'Care for collections and bring history to life for the public.' },
-  { title: 'Cartoonist', pill: 'Favourited', reason: 'You favourited this career', blurb: 'If you have a popular and recognisable character you are likely to progress rapidly.' },
-  { title: 'Field Archaeologist', pill: 'New match', reason: 'Direct route from your destination subject', blurb: 'Work on excavations for water boards, forestry, civil engineering and surveying organisations.' },
-]
+  { slug: 'arborist-tree-surgeon', pill: 'Favourited', reason: 'You favourited this career' },
+  { slug: 'museum-curator', pill: 'New match', reason: 'Linked to your Archaeology interest' },
+  { slug: 'cartoonist', pill: 'Favourited', reason: 'You favourited this career' },
+  { slug: 'field-archaeologist', pill: 'New match', reason: 'Direct route from your destination subject' },
+].map((c) => ({ ...c, ...careerBySlug(c.slug) }))
 
 function DirectionDial({ lean, dataLean, onChange }) {
   return (
@@ -87,8 +89,8 @@ function ApprenticeshipCard({ name }) {
       </div>
       <h3 className="text-lg leading-snug font-bold text-gray-700">{titleCase(name)} — earn while you learn</h3>
       <p className="line-clamp-4 text-sm text-gray-500">{subj.DegreeApprenticeships}</p>
-      <Link to={`/future/subject/${subjectSlug(name)}`} className="mt-auto">
-        <Button small variant="secondary">See the study route</Button>
+      <Link to={`/future/subject/${subjectSlug(name)}#ways-in`} className="mt-auto">
+        <Button small variant="secondary">See the study routes</Button>
       </Link>
     </Card>
   )
@@ -133,8 +135,10 @@ export default function Future() {
       <p className="flex items-center gap-1.5 text-xs font-semibold text-brand-600">
         <Sparkles size={12} /> {c.reason}
       </p>
-      <p className="line-clamp-3 text-sm text-gray-500">{c.blurb}</p>
-      <div className="mt-auto"><Button small>View Career</Button></div>
+      <p className="line-clamp-3 text-sm text-gray-500">{c.summary}</p>
+      <div className="mt-auto">
+        <Link to={`/future/career/${c.slug}`}><Button small>View Career</Button></Link>
+      </div>
     </Card>
   ))
 

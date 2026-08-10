@@ -1,8 +1,12 @@
 import { useParams, Link } from 'react-router-dom'
 import { GraduationCap, ChevronLeft, BriefcaseBusiness, Building, Lightbulb } from 'lucide-react'
 import { Card, Button, StatusPill } from '../components/ui'
+import Pathway from '../components/Pathway'
+import { routesForSubject, orderByLean, bestMatch } from '../data/pathways'
+import { loadDirection, suggestedLean } from '../data/student'
 import {
   subjectByName, coursesGroupedByUni, universityInfo, titleCase, subjectSlug, splitList,
+  typicalOfferForSubject,
 } from '../data/heap'
 
 function Callout({ icon: Icon, tint, title, children }) {
@@ -32,6 +36,12 @@ export default function SubjectDetail() {
   }
 
   const related = splitList(subj.RelatedSubjects)
+  const lean = loadDirection().lean ?? suggestedLean()
+  const subjectRoutes = orderByLean(
+    routesForSubject(name, subj, typicalOfferForSubject(name)),
+    lean,
+  )
+  const closest = subjectRoutes.length > 1 ? bestMatch(subjectRoutes, lean) : null
 
   return (
     <div className="space-y-6">
@@ -55,15 +65,23 @@ export default function SubjectDetail() {
             <p className="text-sm leading-relaxed text-gray-600">{subj.Intro}</p>
           </Card>
 
+          {subjectRoutes.length > 0 && (
+            <div id="ways-in">
+              <p className="font-bold text-gray-700">Ways into this subject</p>
+              <p className="mt-1 text-sm text-gray-500">
+                The routes people take into this field, ordered to match your direction dial.
+              </p>
+              <div className="mt-3 space-y-4">
+                {subjectRoutes.map((r) => (
+                  <Pathway key={r.name} route={r} matches={r === closest} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {subj.CareerNote && (
             <Callout icon={BriefcaseBusiness} tint="bg-brand-100" title="Where this subject can take you">
               {subj.CareerNote}
-            </Callout>
-          )}
-
-          {subj.DegreeApprenticeships && (
-            <Callout icon={Building} tint="bg-amber-500/10" title="Prefer to earn while you learn?">
-              {subj.DegreeApprenticeships}
             </Callout>
           )}
 

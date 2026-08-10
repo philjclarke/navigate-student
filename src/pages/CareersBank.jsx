@@ -2,15 +2,16 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Signpost, Search, BriefcaseBusiness, Award, PoundSterling, Users } from 'lucide-react'
 import { PageBanner, Card, Button, ImagePlaceholder } from '../components/ui'
+import { careers } from '../data/careers'
 
-const CAREERS = [
-  { title: 'Location Manager', qual: 'An undergraduate degree', salary: '£10k - £20k', competition: 'Medium competition', demand: 'High demand' },
-  { title: 'Pension Scheme Manager', qual: 'An undergraduate degree', salary: '£25k - £40k', competition: 'High competition', demand: 'Medium demand' },
-  { title: 'Fish Farmer', qual: '5 GCSEs', salary: '£15k - £20k', competition: 'Medium competition', demand: 'Medium demand' },
-  { title: 'Arborist/Tree Surgeon', qual: 'A certificate of further education', salary: '£20k - £25k', competition: 'Medium competition', demand: 'High demand' },
-  { title: 'Farm Manager', qual: 'An undergraduate degree', salary: '£25k - £50k', competition: 'Competitive', demand: 'Medium demand' },
-  { title: 'Estates Officer', qual: 'An undergraduate degree', salary: '£25k - £45k', competition: 'There is some competition for this role', demand: 'There is average demand' },
-]
+const CAREERS = careers.map((c) => ({
+  slug: c.slug,
+  title: c.title,
+  qual: c.stats.qualification,
+  salary: c.stats.salary,
+  competition: c.stats.competition,
+  demand: c.stats.demand,
+}))
 
 export default function CareersBank() {
   const [query, setQuery] = useState('')
@@ -41,7 +42,9 @@ export default function CareersBank() {
             <ImagePlaceholder className="h-44 w-36 shrink-0" />
             <div className="space-y-2 text-sm">
               <h3 className="text-lg leading-snug font-bold text-gray-700">{c.title}</h3>
-              <Button small><span className="flex items-center gap-1.5"><BriefcaseBusiness size={13} /> Careers</span></Button>
+              <Link to={`/future/career/${c.slug}`}>
+                <Button small><span className="flex items-center gap-1.5"><BriefcaseBusiness size={13} /> View Career</span></Button>
+              </Link>
               <p className="flex items-start gap-1.5"><Award size={14} className="mt-0.5 shrink-0 text-brand-500" /> {c.qual}</p>
               <p className="flex items-start gap-1.5"><PoundSterling size={14} className="mt-0.5 shrink-0 text-brand-500" /> {c.salary}</p>
               <p className="flex items-start gap-1.5"><Users size={14} className="mt-0.5 shrink-0 text-brand-500" /> {c.competition}</p>

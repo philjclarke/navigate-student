@@ -46,6 +46,24 @@ export function splitList(pipeString) {
   return (pipeString || '').split('|').map((s) => s.trim()).filter(Boolean)
 }
 
+/* Most commonly quoted grades offer across a subject's courses — used to
+   ground pathway steps in real entry requirements rather than invented ones. */
+export function typicalOfferForSubject(name) {
+  const tally = new Map()
+  for (const c of coursesForSubject(name)) {
+    const offer = (c.GradesOffer || '').trim().replace(/\.$/, '')
+    if (!/^[A-E*]{2,4}$/.test(offer)) continue
+    tally.set(offer, (tally.get(offer) || 0) + 1)
+  }
+  if (!tally.size) return null
+  return [...tally.entries()].sort((a, b) => b[1] - a[1])[0][0]
+}
+
+export function subjectReach(name) {
+  const courses = coursesForSubject(name)
+  return { courses: courses.length, institutions: new Set(courses.map((c) => c.University)).size }
+}
+
 /* Group a subject's courses by university, sorted by number of matching courses */
 export function coursesGroupedByUni(name) {
   const groups = new Map()
