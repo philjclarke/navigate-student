@@ -2,6 +2,8 @@
    original site's career detail template (4 tabs). heapSubjects link each
    career to real HEAP subject areas for the careers <-> courses bridge. */
 
+import { pathwaysForCareer } from './pathways'
+
 export const careers = [
   {
     slug: 'arborist-tree-surgeon',
@@ -351,3 +353,19 @@ export const careers = [
 
 export const careerBySlug = (slug) => careers.find((c) => c.slug === slug)
 export const careerByTitle = (title) => careers.find((c) => c.title === title)
+
+/* Reverse link: which careers does this subject area lead to, and by which
+   routes? This is what a subject page can say that a career page cannot. */
+export function careersForSubject(name) {
+  return careers
+    .filter(
+      (c) =>
+        c.heapSubjects.includes(name) ||
+        pathwaysForCareer(c.slug).some((r) => r.subject === name),
+    )
+    .map((c) => ({
+      ...c,
+      routeTypes: [...new Set(pathwaysForCareer(c.slug).map((r) => r.type))],
+      viaThisSubject: pathwaysForCareer(c.slug).some((r) => r.subject === name),
+    }))
+}
