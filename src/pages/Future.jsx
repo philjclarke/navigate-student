@@ -2,15 +2,17 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Signpost, BriefcaseBusiness, GraduationCap, Compass, Sparkles, Info,
-  ChevronRight, Building, Wrench,
+  ChevronRight, Wrench,
 } from 'lucide-react'
 import { Card, Button, StatusPill } from '../components/ui'
 import DirectionWizard from '../components/DirectionWizard'
 import signpostImg from '../assets/my-future-signpost.png'
-import { subjectByName, coursesForSubject, titleCase, subjectSlug, splitList } from '../data/heap'
+import { subjectByName, coursesForSubject, titleCase, subjectSlug } from '../data/heap'
 import { student, signals, suggestedLean, loadDirection, saveDirection } from '../data/student'
 
 import { careerBySlug } from '../data/careers'
+import { pathwaysForCareer } from '../data/pathways'
+import RouteCard from '../components/RouteCard'
 
 const CAREERS = [
   { slug: 'arborist-tree-surgeon', pill: 'Favourited', reason: 'You favourited this career' },
@@ -76,25 +78,7 @@ function SubjectCard({ name }) {
   )
 }
 
-function ApprenticeshipCard({ name }) {
-  const subj = subjectByName(name)
-  if (!subj?.DegreeApprenticeships) return null
-  return (
-    <Card className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-500/15 text-amber-500">
-          <Building size={17} />
-        </span>
-        <StatusPill>Degree apprenticeship</StatusPill>
-      </div>
-      <h3 className="text-lg leading-snug font-bold text-gray-700">{titleCase(name)} — earn while you learn</h3>
-      <p className="line-clamp-4 text-sm text-gray-500">{subj.DegreeApprenticeships}</p>
-      <Link to={`/future/subject/${subjectSlug(name)}#leads-to`} className="mt-auto">
-        <Button small variant="secondary">Where this can take you</Button>
-      </Link>
-    </Card>
-  )
-}
+const routeOfType = (slug, type) => pathwaysForCareer(slug).find((r) => r.type === type)
 
 export default function Future() {
   const [direction, setDirection] = useState(loadDirection)
@@ -111,18 +95,25 @@ export default function Future() {
   }
 
   const interests = direction.interests
-  const apprenticeshipSubjects = useMemo(
-    () => interests.filter((i) => subjectByName(i)?.DegreeApprenticeships),
-    [interests],
-  )
 
   const showCareers = filter === 'All' || filter === 'Careers'
   const showCourses = filter === 'All' || filter === 'University'
-  const showApprentice = filter === 'All' || filter === 'Apprenticeships'
+  const showRoutes = filter === 'All' || filter === 'Apprenticeships'
 
   /* The dial reorders the feed, but work-based options never come last —
      Navigate leads with the world of work rather than pushing university. */
   const academicFirst = lean >= 50
+
+  /* Which route we champion in the feed. Apprenticeships lead by default;
+     a strongly vocational dial swaps in the straight-into-work route. The
+     Apprenticeships filter always means apprenticeships, for every career. */
+  const routes = useMemo(() => {
+    if (filter === 'Apprenticeships') {
+      return CAREERS.map((c) => ({ career: c, route: routeOfType(c.slug, 'apprenticeship') }))
+    }
+    const type = lean <= 35 ? 'work' : 'apprenticeship'
+    return CAREERS.slice(0, 3).map((c) => ({ career: c, route: routeOfType(c.slug, type) }))
+  }, [filter, lean])
 
   const careerCards = showCareers && CAREERS.map((c) => (
     <Card key={c.title} className="flex flex-col gap-3">
@@ -144,9 +135,11 @@ export default function Future() {
   ))
 
   const subjectCards = showCourses && interests.map((name) => <SubjectCard key={name} name={name} />)
-  const apprenticeCards = showApprentice && apprenticeshipSubjects.map((name) => (
-    <ApprenticeshipCard key={`app-${name}`} name={name} />
-  ))
+  const routeCards = showRoutes && routes
+    .filter((r) => r.route)
+    .map(({ career, route }) => (
+      <RouteCard key={`${career.slug}-${route.type}`} career={career} route={route} />
+    ))
 
   return (
     <div className="space-y-6">
@@ -240,7 +233,7 @@ export default function Future() {
         <div>
           {/* Filter */}
           <div className="mb-4 flex flex-wrap gap-2">
-            {['All', 'Careers', 'University', 'Apprenticeships'].map((f) => (
+            {['All', 'Careers', 'Apprenticeships', 'University'].map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
@@ -255,8 +248,8 @@ export default function Future() {
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {academicFirst
-              ? [apprenticeCards, subjectCards, careerCards]
-              : [careerCards, apprenticeCards, subjectCards]}
+              ? [routeCards, subjectCards, careerCards]
+              : [careerCards, routeCards, subjectCards]}
           </div>
         </div>
 
