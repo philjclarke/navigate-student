@@ -89,8 +89,8 @@ function ApprenticeshipCard({ name }) {
       </div>
       <h3 className="text-lg leading-snug font-bold text-gray-700">{titleCase(name)} — earn while you learn</h3>
       <p className="line-clamp-4 text-sm text-gray-500">{subj.DegreeApprenticeships}</p>
-      <Link to={`/future/subject/${subjectSlug(name)}#ways-in`} className="mt-auto">
-        <Button small variant="secondary">See the study routes</Button>
+      <Link to={`/future/subject/${subjectSlug(name)}#leads-to`} className="mt-auto">
+        <Button small variant="secondary">Where this can take you</Button>
       </Link>
     </Card>
   )
@@ -120,7 +120,8 @@ export default function Future() {
   const showCourses = filter === 'All' || filter === 'University'
   const showApprentice = filter === 'All' || filter === 'Apprenticeships'
 
-  /* Order the feed by lean: university-heavy leans put subjects first */
+  /* The dial reorders the feed, but work-based options never come last —
+     Navigate leads with the world of work rather than pushing university. */
   const academicFirst = lean >= 50
 
   const careerCards = showCareers && CAREERS.map((c) => (
@@ -254,7 +255,7 @@ export default function Future() {
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {academicFirst
-              ? [subjectCards, apprenticeCards, careerCards]
+              ? [apprenticeCards, subjectCards, careerCards]
               : [careerCards, apprenticeCards, subjectCards]}
           </div>
         </div>

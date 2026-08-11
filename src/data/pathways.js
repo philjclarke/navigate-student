@@ -1,342 +1,312 @@
-/* Study routes — the step-by-step ways into a career.
-   Distinct from a HEAP subject area (a field of study): a route is a path with
-   an entry point, stages, a duration and a cost, and it sits somewhere on the
-   same work <-> university spectrum as the direction dial.
+/* Routes to a destination.
+   A destination is a career. A route is one way of reaching it — a sequence of
+   stages with real durations, and a set of human trade-offs (where you live,
+   whether you earn, where the effort goes, what's competitive).
 
-   `subject` links a route to a real HEAP subject area so the degree stage can
-   quote live course counts and typical offers. */
+   Navigate is a world-of-work-first platform, so routes are always presented
+   apprenticeship first, then straight into work, then university. The
+   direction dial does not reorder them — it only marks which route sits
+   closest to what the student has said they want. */
 
 export const ROUTE_TYPES = {
-  work: { label: 'Straight into work', lean: 12, accent: 'teal' },
-  apprenticeship: { label: 'Earn while you learn', lean: 45, accent: 'amber' },
-  degree: { label: 'University degree', lean: 88, accent: 'purple' },
+  apprenticeship: { label: 'Earn while you learn', lean: 45, accent: 'amber', order: 0 },
+  work: { label: 'Straight into work', lean: 12, accent: 'teal', order: 1 },
+  degree: { label: 'University degree', lean: 88, accent: 'purple', order: 2 },
 }
+
+/* Standard factor set so routes can be compared like with like. */
+const F = (home, money, effort, competition) => ({ home, money, effort, competition })
 
 const P = {
   'field-archaeologist': [
     {
-      type: 'degree', name: 'Archaeology degree', subject: 'ARCHAEOLOGY',
-      duration: '5 years from now', earn: 'Student finance — no salary while you study',
-      steps: [
-        { label: 'Level 3', detail: 'A-levels or BTEC. History, geography or a science preferred', duration: '2 years', kind: 'college' },
-        { label: 'Archaeology degree', detail: 'BA or BSc, often with fieldwork built in', duration: '3 years', kind: 'university' },
-        { label: 'Training digs', detail: 'Summer excavations alongside your course', duration: 'Each summer', kind: 'work' },
-        { label: 'Site assistant', detail: 'First paid role with a commercial unit', kind: 'job' },
-      ],
-    },
-    {
       type: 'apprenticeship', name: 'Historic environment apprenticeship', subject: 'ARCHAEOLOGY',
-      duration: '6 years from now', earn: 'Salaried throughout, tuition paid by your employer',
+      arrival: 'Qualified field archaeologist',
       steps: [
-        { label: 'Level 3', detail: 'A-levels or BTEC alongside volunteering on local digs', duration: '2 years', kind: 'college' },
-        { label: 'Apprentice archaeologist', detail: 'Paid work with a commercial unit, degree studied part-time', duration: '4 years', kind: 'apprenticeship' },
-        { label: 'Qualified field archaeologist', detail: 'Degree and experience, no student debt', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels or BTEC, volunteering on local digs', years: 2, kind: 'college' },
+        { label: 'Apprentice archaeologist', detail: 'Paid work with a commercial unit, degree studied part-time', years: 4, kind: 'apprenticeship' },
       ],
+      factors: F('Usually stay local', 'Salaried throughout, no tuition fees', 'Effort goes into work and assessment, not exams', 'Few employers take apprentices each year'),
     },
     {
       type: 'work', name: 'Straight onto site',
-      duration: '2–3 years from now', earn: 'Earning from the start, lower starting pay',
+      arrival: 'Field archaeologist',
       steps: [
-        { label: 'Field school', detail: 'A short excavation course or community dig', duration: 'Weeks', kind: 'college' },
-        { label: 'Site assistant', detail: 'Entry-level digging role with a commercial unit', kind: 'job' },
-        { label: 'CIfA qualifications', detail: 'Professional accreditation gained on the job', duration: 'Ongoing', kind: 'professional' },
+        { label: 'Field school', detail: 'A short excavation course or community dig', years: 0.5, kind: 'college' },
+        { label: 'Site assistant', detail: 'Entry-level digging role, learning from the team', years: 1.5, kind: 'job' },
       ],
+      factors: F('Travel to wherever the dig is', 'Earning immediately, lower starting pay', 'Effort goes into finding work and proving yourself', 'Contracts are short — you reapply often'),
+    },
+    {
+      type: 'degree', name: 'Archaeology degree', subject: 'ARCHAEOLOGY',
+      arrival: 'Site assistant with a degree',
+      steps: [
+        { label: 'Level 3', detail: 'History, geography or a science preferred', years: 2, kind: 'college' },
+        { label: 'Archaeology degree', detail: 'BA or BSc with fieldwork and summer digs built in', years: 3, kind: 'university' },
+      ],
+      factors: F('Most students move away', 'Student finance, repaid once you earn', 'Effort goes into essays, exams and fieldwork', 'Course places are competitive at top universities'),
     },
   ],
 
   'arborist-tree-surgeon': [
     {
-      type: 'work', name: 'Learn on the tools',
-      duration: '1–2 years from now', earn: 'Earning immediately',
+      type: 'apprenticeship', name: 'Arboriculture apprenticeship',
+      arrival: 'Qualified climbing arborist',
       steps: [
-        { label: 'GCSEs', detail: 'No formal entry requirements beyond fitness and enthusiasm', kind: 'college' },
-        { label: 'Groundsperson', detail: 'Paid work supporting climbers and processing timber', kind: 'job' },
-        { label: 'NPTC tickets', detail: 'Chainsaw and aerial rescue certificates, usually employer-funded', duration: 'Short courses', kind: 'professional' },
-        { label: 'Climbing arborist', detail: 'Fully qualified, working at height', kind: 'job' },
+        { label: 'Level 2 apprenticeship', detail: 'Paid tree work with college day-release', years: 2, kind: 'apprenticeship' },
+        { label: 'Level 3 advanced', detail: 'Climbing, felling and crew responsibility', years: 1, kind: 'apprenticeship' },
       ],
+      factors: F('Stay local — employers are everywhere', 'Salaried, tickets paid for', 'Effort is physical and practical', 'You need an employer to take you on'),
     },
     {
-      type: 'apprenticeship', name: 'Arboriculture apprenticeship',
-      duration: '2–3 years from now', earn: 'Salaried, training paid for',
+      type: 'work', name: 'Learn on the tools',
+      arrival: 'Climbing arborist',
       steps: [
-        { label: 'Level 2 apprenticeship', detail: 'Paid work with day-release college study', duration: '2 years', kind: 'apprenticeship' },
-        { label: 'Level 3 arborist', detail: 'Advanced apprenticeship in tree work', duration: '1 year', kind: 'apprenticeship' },
-        { label: 'Team leader', detail: 'Running crews and quoting jobs', kind: 'job' },
+        { label: 'Groundsperson', detail: 'Paid work supporting climbers and chipping brash', years: 1, kind: 'job' },
+        { label: 'NPTC tickets', detail: 'Chainsaw and aerial rescue certificates, usually employer-funded', years: 0.5, kind: 'professional' },
       ],
+      factors: F('Stay local', 'Earning from week one', 'Effort is physical from day one', 'Easiest route to get started on'),
     },
     {
       type: 'degree', name: 'Arboriculture degree', subject: 'Forestry and Arboriculture',
-      duration: '5 years from now', earn: 'Student finance; opens consultancy roles',
+      arrival: 'Consultant or contracts manager',
       steps: [
-        { label: 'Level 3', detail: 'A-levels or a land-based diploma', duration: '2 years', kind: 'college' },
-        { label: 'Forestry degree', detail: 'Arboriculture, forestry or countryside management', duration: '3 years', kind: 'university' },
-        { label: 'Consultant or manager', detail: 'Tree surveys, planning advice and estate management', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels or a land-based diploma', years: 2, kind: 'college' },
+        { label: 'Forestry degree', detail: 'Arboriculture, forestry or countryside management', years: 3, kind: 'university' },
       ],
+      factors: F('Land-based universities are often rural', 'Student finance, repaid once you earn', 'Effort goes into science and coursework', 'Specialist courses, fewer places'),
     },
   ],
 
   'museum-curator': [
     {
-      type: 'degree', name: 'Degree then museum studies', subject: 'HISTORY',
-      duration: '6 years from now', earn: 'Student finance across both courses',
-      steps: [
-        { label: 'Level 3', detail: 'A-levels including an essay subject such as history', duration: '2 years', kind: 'college' },
-        { label: 'Humanities degree', detail: 'History, archaeology or history of art', duration: '3 years', kind: 'university' },
-        { label: 'Volunteering', detail: 'Collections or front-of-house work alongside study', duration: 'Ongoing', kind: 'work' },
-        { label: 'MA Museum Studies', detail: 'The usual step into curatorial roles', duration: '1 year', kind: 'university' },
-      ],
-    },
-    {
       type: 'apprenticeship', name: 'Cultural heritage apprenticeship',
-      duration: '4 years from now', earn: 'Salaried, no tuition fees',
+      arrival: 'Collections assistant',
       steps: [
-        { label: 'Level 3', detail: 'A-levels or BTEC in a humanities subject', duration: '2 years', kind: 'college' },
-        { label: 'Heritage apprentice', detail: 'Paid collections work with part-time study', duration: '2 years', kind: 'apprenticeship' },
-        { label: 'Collections assistant', detail: 'Cataloguing and care, progressing towards curation', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels or BTEC in a humanities subject', years: 2, kind: 'college' },
+        { label: 'Heritage apprentice', detail: 'Paid collections work with part-time study', years: 2, kind: 'apprenticeship' },
       ],
+      factors: F('Depends where the museum is', 'Salaried, no tuition fees', 'Effort goes into cataloguing and practical care', 'Very few heritage apprenticeships advertised'),
     },
     {
       type: 'work', name: 'In through the front door',
-      duration: '3–5 years from now', earn: 'Earning from the start, slower route up',
+      arrival: 'Collections assistant',
       steps: [
-        { label: 'Visitor assistant', detail: 'Front-of-house work at a museum or gallery', kind: 'job' },
-        { label: 'Collections assistant', detail: 'Move across into documentation and stores', kind: 'job' },
-        { label: 'Part-time degree', detail: 'Study alongside work, often employer-supported', duration: '4–6 years', kind: 'university' },
+        { label: 'Visitor assistant', detail: 'Front-of-house work at a museum or gallery', years: 1, kind: 'job' },
+        { label: 'Move into collections', detail: 'Sideways step into documentation and stores', years: 2, kind: 'job' },
       ],
+      factors: F('Stay local if you have a museum nearby', 'Earning immediately, modest pay', 'Effort goes into networking and internal moves', 'Curatorial roles usually still expect a degree'),
+    },
+    {
+      type: 'degree', name: 'Degree then museum studies', subject: 'HISTORY',
+      arrival: 'Assistant curator',
+      steps: [
+        { label: 'Level 3', detail: 'A-levels including an essay subject such as history', years: 2, kind: 'college' },
+        { label: 'Humanities degree', detail: 'History, archaeology or history of art, volunteering alongside', years: 3, kind: 'university' },
+        { label: 'MA Museum Studies', detail: 'The usual step into curatorial roles', years: 1, kind: 'university' },
+      ],
+      factors: F('Likely to move away, twice', 'Student finance for both courses', 'Effort goes into essays and research', 'Entry-level curator posts attract many applicants'),
     },
   ],
 
   cartoonist: [
     {
-      type: 'work', name: 'Portfolio first',
-      duration: 'Start today', earn: 'Freelance income, irregular at first',
+      type: 'apprenticeship', name: 'Creative apprenticeship',
+      arrival: 'In-house illustrator',
       steps: [
-        { label: 'Build a body of work', detail: 'Publish something small every week', duration: 'Ongoing', kind: 'work' },
-        { label: 'First commissions', detail: 'Local press, zines, small brands', kind: 'job' },
-        { label: 'Agent or syndication', detail: 'Representation once your style is recognisable', kind: 'professional' },
+        { label: 'Level 3 art', detail: 'Creative A-levels or BTEC, building a portfolio', years: 2, kind: 'college' },
+        { label: 'Junior creative apprentice', detail: 'Paid studio work with structured training', years: 1.5, kind: 'apprenticeship' },
       ],
+      factors: F('Studios cluster in cities', 'Salaried while you build a portfolio', 'Effort goes into client work and deadlines', 'Studio apprenticeships are scarce'),
+    },
+    {
+      type: 'work', name: 'Portfolio first',
+      arrival: 'Freelance cartoonist',
+      steps: [
+        { label: 'Build a body of work', detail: 'Publish something small every week', years: 1, kind: 'work' },
+        { label: 'First commissions', detail: 'Local press, zines and small brands', years: 1, kind: 'job' },
+      ],
+      factors: F('Work from anywhere', 'Irregular income at first', 'Effort goes into self-promotion and pitching', 'No gatekeeper — but no safety net either'),
     },
     {
       type: 'degree', name: 'Illustration degree', subject: 'ART and DESIGN (GRAPHIC DESIGN)',
-      duration: '6 years from now', earn: 'Student finance; studio contacts and critique',
+      arrival: 'Freelance or studio illustrator',
       steps: [
-        { label: 'Level 3 art', detail: 'A-levels or a creative BTEC', duration: '2 years', kind: 'college' },
-        { label: 'Art foundation', detail: 'A year to find your direction and build a portfolio', duration: '1 year', kind: 'college' },
-        { label: 'Illustration degree', detail: 'Portfolio and interview matter more than grades', duration: '3 years', kind: 'university' },
-        { label: 'Freelance or studio', detail: 'Commissions, animation or in-house design', kind: 'job' },
+        { label: 'Level 3 art', detail: 'A-levels or a creative BTEC', years: 2, kind: 'college' },
+        { label: 'Art foundation', detail: 'A year to find your direction and build a portfolio', years: 1, kind: 'college' },
+        { label: 'Illustration degree', detail: 'Portfolio and interview matter more than grades', years: 3, kind: 'university' },
       ],
-    },
-    {
-      type: 'apprenticeship', name: 'Creative apprenticeship',
-      duration: '3 years from now', earn: 'Salaried in a studio team',
-      steps: [
-        { label: 'Level 3 art', detail: 'Creative A-levels or BTEC with a portfolio', duration: '2 years', kind: 'college' },
-        { label: 'Junior creative apprentice', detail: 'Paid studio work with structured training', duration: '18 months', kind: 'apprenticeship' },
-        { label: 'In-house illustrator', detail: 'Agency or brand team, freelancing on the side', kind: 'job' },
-      ],
+      factors: F('Art schools are mostly in big cities', 'Student finance, plus materials costs', 'Effort goes into critique and self-directed projects', 'Portfolio-based selection, not grades'),
     },
   ],
 
   'location-manager': [
     {
-      type: 'work', name: 'Up through the crew',
-      duration: '3–5 years from now', earn: 'Paid from day one, freelance contracts',
+      type: 'apprenticeship', name: 'Production trainee scheme',
+      arrival: 'Location assistant',
       steps: [
-        { label: 'Runner', detail: 'The industry standard way in. A driving licence is essential', kind: 'job' },
-        { label: 'Location assistant', detail: 'Unit bases, parking, permissions', duration: '2–3 years', kind: 'job' },
-        { label: 'Location manager', detail: 'Credits, not certificates, get you here', kind: 'job' },
+        { label: 'Level 3', detail: 'Any subjects — short films of your own help', years: 2, kind: 'college' },
+        { label: 'ScreenSkills trainee', detail: 'Paid placements across productions', years: 1, kind: 'apprenticeship' },
       ],
+      factors: F('Follow productions around the country', 'Paid placements, fees covered', 'Effort goes into learning on set', 'Schemes take small cohorts each year'),
     },
     {
-      type: 'apprenticeship', name: 'Production trainee scheme',
-      duration: '3 years from now', earn: 'Salaried trainee placements',
+      type: 'work', name: 'Up through the crew',
+      arrival: 'Location manager',
       steps: [
-        { label: 'Level 3', detail: 'Any subjects — a portfolio of short films helps', duration: '2 years', kind: 'college' },
-        { label: 'ScreenSkills trainee', detail: 'Paid placements across productions', duration: '12 months', kind: 'apprenticeship' },
-        { label: 'Location assistant', detail: 'Into the department with contacts already made', kind: 'job' },
+        { label: 'Runner', detail: 'The industry standard way in. A driving licence is essential', years: 1, kind: 'job' },
+        { label: 'Location assistant', detail: 'Unit bases, parking and permissions', years: 3, kind: 'job' },
       ],
+      factors: F('Away from home for weeks at a time', 'Paid from day one, freelance contracts', 'Effort goes into contacts and reliability', 'Credits matter more than qualifications'),
     },
     {
       type: 'degree', name: 'Film and TV production degree', subject: 'FILM, RADIO and TV STUDIES',
-      duration: '5 years from now', earn: 'Student finance; still expect to start as a runner',
+      arrival: 'Runner, then assistant',
       steps: [
-        { label: 'Level 3', detail: 'A-levels or a creative BTEC', duration: '2 years', kind: 'college' },
-        { label: 'Production degree', detail: 'Learn the whole production process and crew up on student shoots', duration: '3 years', kind: 'university' },
-        { label: 'Runner', detail: 'Everyone starts here — but you arrive knowing the language', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels or a creative BTEC', years: 2, kind: 'college' },
+        { label: 'Production degree', detail: 'Learn the whole process and crew up on student shoots', years: 3, kind: 'university' },
       ],
+      factors: F('Likely to move away', 'Student finance, repaid once you earn', 'Effort goes into projects and productions', 'You still start as a runner afterwards'),
     },
   ],
 
   'pension-scheme-manager': [
     {
-      type: 'degree', name: 'Finance degree', subject: 'FINANCE',
-      duration: '5 years from now', earn: 'Student finance, then graduate salary',
-      steps: [
-        { label: 'Level 3', detail: 'Strong maths at A-level is expected', duration: '2 years', kind: 'college' },
-        { label: 'Finance degree', detail: 'Finance, economics or actuarial science', duration: '3 years', kind: 'university' },
-        { label: 'Graduate scheme', detail: 'Consultancy, insurer or in-house pensions team', kind: 'job' },
-        { label: 'PMI exams', detail: 'Professional qualifications taken alongside work', duration: '3–4 years', kind: 'professional' },
-      ],
-    },
-    {
       type: 'apprenticeship', name: 'Financial services degree apprenticeship',
-      duration: '6 years from now', earn: 'Salaried with fees paid — a degree and no debt',
+      arrival: 'Scheme administrator with a degree',
       steps: [
-        { label: 'Level 3', detail: 'A-levels including maths', duration: '2 years', kind: 'college' },
-        { label: 'Degree apprentice', detail: 'Paid work in a pensions team with part-time degree study', duration: '4 years', kind: 'apprenticeship' },
-        { label: 'Scheme administrator', detail: 'Qualified, with four years of experience already', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels including maths', years: 2, kind: 'college' },
+        { label: 'Degree apprentice', detail: 'Paid work in a pensions team, degree studied part-time', years: 4, kind: 'apprenticeship' },
       ],
+      factors: F('Firms cluster in cities — commuting is common', 'Salaried with fees paid — a degree and no debt', 'Effort splits between work and part-time study', 'Places are as competitive as top universities'),
     },
     {
       type: 'work', name: 'School-leaver programme',
-      duration: '4–6 years from now', earn: 'Earning immediately, exams funded',
+      arrival: 'PMI-qualified administrator',
       steps: [
-        { label: 'Level 3', detail: 'A-levels or a business BTEC', duration: '2 years', kind: 'college' },
-        { label: 'Pensions administrator', detail: 'Entry role on a school-leaver programme', kind: 'job' },
-        { label: 'PMI exams', detail: 'Studied part-time and paid for by your employer', duration: '3–4 years', kind: 'professional' },
+        { label: 'Level 3', detail: 'A-levels or a business BTEC', years: 2, kind: 'college' },
+        { label: 'Pensions administrator', detail: 'Entry role with employer-funded professional exams', years: 2, kind: 'job' },
       ],
+      factors: F('Stay local if there is a firm nearby', 'Earning immediately, exams funded', 'Effort goes into professional exams alongside work', 'Fewer firms run school-leaver routes'),
+    },
+    {
+      type: 'degree', name: 'Finance degree', subject: 'FINANCE',
+      arrival: 'Graduate scheme',
+      steps: [
+        { label: 'Level 3', detail: 'Strong maths at A-level is expected', years: 2, kind: 'college' },
+        { label: 'Finance degree', detail: 'Finance, economics or actuarial science', years: 3, kind: 'university' },
+        { label: 'Graduate scheme', detail: 'Consultancy, insurer or in-house pensions team', years: 2, kind: 'job' },
+      ],
+      factors: F('Most students move away', 'Student finance, repaid once you earn', 'Effort goes into exams, then more exams at work', 'Graduate schemes are heavily oversubscribed'),
     },
   ],
 
   'fish-farmer': [
     {
-      type: 'work', name: 'Straight onto the farm',
-      duration: 'Start after GCSEs', earn: 'Earning immediately',
+      type: 'apprenticeship', name: 'Aquaculture apprenticeship',
+      arrival: 'Qualified site technician',
       steps: [
-        { label: 'GCSEs', detail: 'Science is helpful but not always required', kind: 'college' },
-        { label: 'Farm hand', detail: 'Feeding, grading and net maintenance', kind: 'job' },
-        { label: 'Husbandry tickets', detail: 'Boat handling and fish health certificates', duration: 'Short courses', kind: 'professional' },
-        { label: 'Site technician', detail: 'Responsible for stock health and water quality', kind: 'job' },
+        { label: 'Modern Apprenticeship', detail: 'Paid work on a farm with structured assessment', years: 2, kind: 'apprenticeship' },
+        { label: 'Technician', detail: 'Running daily operations and stock health', years: 1, kind: 'job' },
       ],
+      factors: F('Farms are coastal and often remote', 'Salaried, training paid for', 'Effort is practical and outdoors', 'Limited to areas with fish farms'),
     },
     {
-      type: 'apprenticeship', name: 'Aquaculture apprenticeship',
-      duration: '2 years from now', earn: 'Salaried with training built in',
+      type: 'work', name: 'Straight onto the farm',
+      arrival: 'Site technician',
       steps: [
-        { label: 'Modern Apprenticeship', detail: 'Paid work on a farm with structured assessment', duration: '2 years', kind: 'apprenticeship' },
-        { label: 'Technician', detail: 'Qualified, running daily operations', kind: 'job' },
-        { label: 'Site manager', detail: 'With a few seasons behind you', kind: 'job' },
+        { label: 'Farm hand', detail: 'Feeding, grading and net maintenance', years: 1, kind: 'job' },
+        { label: 'Husbandry tickets', detail: 'Boat handling and fish health certificates', years: 0.5, kind: 'professional' },
       ],
+      factors: F('Often means relocating, sometimes staff housing', 'Earning immediately', 'Effort is physical, in all weathers', 'Employers usually need people'),
     },
     {
       type: 'degree', name: 'Marine science degree', subject: 'MARINE/MARITIME STUDIES',
-      duration: '5 years from now', earn: 'Student finance; opens hatchery and technical roles',
+      arrival: 'Hatchery or fish health role',
       steps: [
-        { label: 'Level 3', detail: 'A-levels including biology', duration: '2 years', kind: 'college' },
-        { label: 'Marine or aquaculture degree', detail: 'Fish biology, health and farm systems', duration: '3 years', kind: 'university' },
-        { label: 'Hatchery or fish health role', detail: 'Technical and management routes', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels including biology', years: 2, kind: 'college' },
+        { label: 'Marine or aquaculture degree', detail: 'Fish biology, health and farm systems', years: 3, kind: 'university' },
       ],
+      factors: F('Coastal universities — likely to move', 'Student finance, repaid once you earn', 'Effort goes into lab and field science', 'Opens technical roles others cannot reach'),
     },
   ],
 
   'farm-manager': [
     {
-      type: 'work', name: 'Work your way up',
-      duration: '5–8 years from now', earn: 'Earning throughout',
+      type: 'apprenticeship', name: 'Agriculture apprenticeship',
+      arrival: 'Assistant farm manager',
       steps: [
-        { label: 'Harvest work', detail: 'Seasonal jobs on arable or dairy farms', kind: 'work' },
-        { label: 'Stockperson or driver', detail: 'Full-time farm role with real responsibility', kind: 'job' },
-        { label: 'Assistant manager', detail: 'Experience-led progression, often on the same farm', kind: 'job' },
+        { label: 'Level 3 apprenticeship', detail: 'Paid farm work with college day-release', years: 2, kind: 'apprenticeship' },
+        { label: 'Farm business management', detail: 'Higher or degree apprenticeship, studied part-time', years: 3, kind: 'apprenticeship' },
       ],
+      factors: F('Live on or near the farm', 'Salaried, fees paid', 'Effort splits between seasons and study', 'Depends on finding a farm that trains'),
     },
     {
-      type: 'apprenticeship', name: 'Agriculture apprenticeship',
-      duration: '5 years from now', earn: 'Salaried, fees paid',
+      type: 'work', name: 'Work your way up',
+      arrival: 'Assistant manager',
       steps: [
-        { label: 'Level 3 apprenticeship', detail: 'Paid farm work with college day-release', duration: '2 years', kind: 'apprenticeship' },
-        { label: 'Level 4 or degree apprenticeship', detail: 'Farm business management, studied part-time', duration: '2–3 years', kind: 'apprenticeship' },
-        { label: 'Assistant manager', detail: 'Qualified with a full CV of practical seasons', kind: 'job' },
+        { label: 'Seasonal farm work', detail: 'Harvest and lambing jobs to build experience', years: 1, kind: 'work' },
+        { label: 'Stockperson or driver', detail: 'Full-time role with real responsibility', years: 3, kind: 'job' },
       ],
+      factors: F('Farm accommodation is common', 'Earning throughout', 'Effort is practical and seasonal', 'Progression depends on who you work for'),
     },
     {
       type: 'degree', name: 'Agriculture degree', subject: 'AGRICULTURAL SCIENCES/AGRICULTURE',
-      duration: '6 years from now', earn: 'Student finance; placement year is usually paid',
+      arrival: 'Graduate management scheme',
       steps: [
-        { label: 'Level 3', detail: 'A-levels or a land-based diploma plus farm experience', duration: '2 years', kind: 'college' },
-        { label: 'Agriculture degree', detail: 'Farm business management with a placement year', duration: '4 years', kind: 'university' },
-        { label: 'Graduate management', detail: 'Estate and corporate farming schemes', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels or a land-based diploma plus farm experience', years: 2, kind: 'college' },
+        { label: 'Agriculture degree', detail: 'Farm business management with a paid placement year', years: 4, kind: 'university' },
       ],
+      factors: F('Land-based universities, usually residential', 'Student finance, placement year is paid', 'Effort goes into business and science modules', 'Estate schemes prefer graduates'),
     },
   ],
 
   'estates-officer': [
     {
-      type: 'degree', name: 'RICS-accredited degree', subject: 'SURVEYING and REAL ESTATE MANAGEMENT',
-      duration: '7 years from now', earn: 'Student finance, then graduate salary during the APC',
-      steps: [
-        { label: 'Level 3', detail: 'A-levels or a BTEC in business or construction', duration: '2 years', kind: 'college' },
-        { label: 'Surveying degree', detail: 'Must be RICS-accredited to count towards chartership', duration: '3 years', kind: 'university' },
-        { label: 'APC', detail: 'Structured experience and a final assessment', duration: '2 years', kind: 'professional' },
-        { label: 'Chartered Surveyor', detail: 'MRICS after your name', kind: 'job' },
-      ],
-    },
-    {
       type: 'apprenticeship', name: 'Chartered Surveyor degree apprenticeship',
-      duration: '7 years from now', earn: 'Salaried the whole way — degree fees paid by your employer',
+      arrival: 'Chartered Surveyor (MRICS)',
       steps: [
-        { label: 'Level 3', detail: 'A-levels or equivalent', duration: '2 years', kind: 'college' },
-        { label: 'Degree apprentice', detail: 'Paid surveying work with part-time accredited degree', duration: '5 years', kind: 'apprenticeship' },
-        { label: 'Chartered Surveyor', detail: 'APC completed within the apprenticeship', kind: 'job' },
+        { label: 'Level 3', detail: 'A-levels or equivalent', years: 2, kind: 'college' },
+        { label: 'Degree apprentice', detail: 'Paid surveying work with a part-time accredited degree', years: 5, kind: 'apprenticeship' },
       ],
+      factors: F('Work where the employer is — often local', 'Salaried the whole way, degree fees paid', 'Effort splits between work, study and the APC', 'Highly competitive — apply in Year 13'),
     },
     {
       type: 'work', name: 'Technical route',
-      duration: '4–6 years from now', earn: 'Earning from the start',
+      arrival: 'AssocRICS surveyor',
       steps: [
-        { label: 'Estates assistant', detail: 'Administration and inspections for a council or landlord', kind: 'job' },
-        { label: 'Part-time study', detail: 'Accredited degree or diploma, often employer-funded', duration: '4 years', kind: 'university' },
-        { label: 'AssocRICS', detail: 'Associate membership, with chartership available later', kind: 'professional' },
+        { label: 'Estates assistant', detail: 'Administration and inspections for a council or landlord', years: 2, kind: 'job' },
+        { label: 'Part-time study', detail: 'Accredited degree or diploma, often employer-funded', years: 4, kind: 'university' },
       ],
+      factors: F('Stay local', 'Earning from the start', 'Effort goes into studying around a full-time job', 'Chartership takes longer from here'),
+    },
+    {
+      type: 'degree', name: 'RICS-accredited degree', subject: 'SURVEYING and REAL ESTATE MANAGEMENT',
+      arrival: 'Chartered Surveyor (MRICS)',
+      steps: [
+        { label: 'Level 3', detail: 'A-levels or a BTEC in business or construction', years: 2, kind: 'college' },
+        { label: 'Surveying degree', detail: 'Must be RICS-accredited to count towards chartership', years: 3, kind: 'university' },
+        { label: 'APC', detail: 'Structured experience in a firm, then final assessment', years: 2, kind: 'professional' },
+      ],
+      factors: F('Likely to move away for the degree', 'Student finance, then a graduate salary', 'Effort goes into exams, then the APC', 'Accredited courses fill quickly'),
     },
   ],
 }
 
 export const pathwaysForCareer = (slug) => P[slug] || []
 
-/* Generic routes into a subject area, built from the HEAP record itself.
-   Used on subject pages, where we know the field of study but not the job. */
-const trim = (text, max = 110) => {
-  if (!text) return ''
-  const clean = text.trim()
-  if (clean.length <= max) return clean
-  const cut = clean.slice(0, max)
-  return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[,.;:]$/, '')}…`
-}
+/* Total years from now until you arrive. */
+export const routeYears = (route) => route.steps.reduce((n, s) => n + s.years, 0)
 
-export function routesForSubject(name, subj, offer) {
-  if (!subj) return []
-  const routes = [
-    {
-      type: 'degree', name: `Degree in ${name.toLowerCase()}`, subject: name,
-      duration: '5 years from now', earn: 'Student finance — no salary while you study',
-      steps: [
-        { label: 'Level 3', detail: trim(subj.SubjectRequirementsPreferences) || 'A-levels or an equivalent Level 3 qualification', duration: '2 years', kind: 'college' },
-        { label: 'Undergraduate degree', detail: offer ? `Typical offer around ${offer}` : 'Entry requirements vary by institution', duration: '3–4 years', kind: 'university' },
-        { label: 'Graduate roles', detail: trim(subj.CareerNote) || 'A range of graduate destinations', kind: 'job' },
-      ],
-    },
-  ]
-  if (subj.DegreeApprenticeships) {
-    routes.push({
-      type: 'apprenticeship', name: 'Degree apprenticeship',
-      duration: '6 years from now', earn: 'Salaried throughout, tuition paid by your employer',
-      steps: [
-        { label: 'Level 3', detail: 'A-levels or an equivalent qualification', duration: '2 years', kind: 'college' },
-        { label: 'Degree apprentice', detail: trim(subj.DegreeApprenticeships, 120), duration: '4–5 years', kind: 'apprenticeship' },
-        { label: 'Qualified professional', detail: 'A degree, paid experience and no student debt', kind: 'job' },
-      ],
-    })
-  }
-  return routes
-}
+/* World-of-work first: apprenticeship, then straight into work, then university. */
+export const orderWorkFirst = (routes) =>
+  [...routes].sort((a, b) => ROUTE_TYPES[a.type].order - ROUTE_TYPES[b.type].order)
 
-/* Order routes so the one closest to the student's direction comes first. */
-export function orderByLean(routes, lean) {
+/* Which route sits closest to what the student has told us they want.
+   Used only to mark a route, never to reorder them. */
+export function closestToLean(routes, lean) {
+  if (!routes.length) return null
   return [...routes].sort(
     (a, b) => Math.abs(ROUTE_TYPES[a.type].lean - lean) - Math.abs(ROUTE_TYPES[b.type].lean - lean),
-  )
-}
-
-export function bestMatch(routes, lean) {
-  return orderByLean(routes, lean)[0]
+  )[0]
 }

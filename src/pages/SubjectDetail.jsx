@@ -1,12 +1,10 @@
 import { useParams, Link } from 'react-router-dom'
 import { GraduationCap, ChevronLeft, BriefcaseBusiness, Building, Lightbulb } from 'lucide-react'
 import { Card, Button, StatusPill } from '../components/ui'
-import Pathway from '../components/Pathway'
-import { routesForSubject, orderByLean, bestMatch } from '../data/pathways'
-import { loadDirection, suggestedLean } from '../data/student'
+import { careersForSubject } from '../data/careers'
+import { ROUTE_TYPES } from '../data/pathways'
 import {
   subjectByName, coursesGroupedByUni, universityInfo, titleCase, subjectSlug, splitList,
-  typicalOfferForSubject,
 } from '../data/heap'
 
 function Callout({ icon: Icon, tint, title, children }) {
@@ -36,12 +34,7 @@ export default function SubjectDetail() {
   }
 
   const related = splitList(subj.RelatedSubjects)
-  const lean = loadDirection().lean ?? suggestedLean()
-  const subjectRoutes = orderByLean(
-    routesForSubject(name, subj, typicalOfferForSubject(name)),
-    lean,
-  )
-  const closest = subjectRoutes.length > 1 ? bestMatch(subjectRoutes, lean) : null
+  const leadsTo = careersForSubject(name)
 
   return (
     <div className="space-y-6">
@@ -65,22 +58,46 @@ export default function SubjectDetail() {
             <p className="text-sm leading-relaxed text-gray-600">{subj.Intro}</p>
           </Card>
 
-          {subjectRoutes.length > 0 && (
-            <div id="ways-in">
-              <p className="font-bold text-gray-700">Ways into this subject</p>
+          {leadsTo.length > 0 && (
+            <div id="leads-to">
+              <p className="font-bold text-gray-700">Where this subject can take you</p>
               <p className="mt-1 text-sm text-gray-500">
-                The routes people take into this field, ordered to match your direction dial.
+                This subject is one stage of a longer journey. These are the destinations it leads
+                to — open one to compare every route there, not just the university one.
               </p>
-              <div className="mt-3 space-y-4">
-                {subjectRoutes.map((r) => (
-                  <Pathway key={r.name} route={r} matches={r === closest} />
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                {leadsTo.map((c) => (
+                  <Link
+                    key={c.slug}
+                    to={`/future/career/${c.slug}?tab=1`}
+                    className="block rounded-xl border border-brand-200 bg-white p-4 transition-colors hover:border-brand-400"
+                  >
+                    <p className="flex items-center gap-2 font-bold text-gray-700">
+                      <BriefcaseBusiness size={16} className="text-brand-500" /> {c.title}
+                    </p>
+                    <p className="mt-1 line-clamp-2 text-sm text-gray-500">{c.summary}</p>
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {c.routeTypes.map((t) => (
+                        <span
+                          key={t}
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            ROUTE_TYPES[t].accent === 'amber' ? 'bg-amber-500/15 text-amber-700'
+                              : ROUTE_TYPES[t].accent === 'teal' ? 'bg-brand-100 text-brand-700'
+                              : 'bg-purple-100 text-purple-700'
+                          }`}
+                        >
+                          {ROUTE_TYPES[t].label}
+                        </span>
+                      ))}
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>
           )}
 
           {subj.CareerNote && (
-            <Callout icon={BriefcaseBusiness} tint="bg-brand-100" title="Where this subject can take you">
+            <Callout icon={BriefcaseBusiness} tint="bg-brand-100" title="An honest note on job prospects">
               {subj.CareerNote}
             </Callout>
           )}

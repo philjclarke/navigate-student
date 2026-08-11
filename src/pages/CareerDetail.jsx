@@ -5,9 +5,9 @@ import {
   Check, Lightbulb, GraduationCap, Building, Clock, MapPin, Wrench, ExternalLink,
 } from 'lucide-react'
 import { Card, Button, StatusPill, ImagePlaceholder } from '../components/ui'
-import Pathway from '../components/Pathway'
+import RouteComparison from '../components/RouteComparison'
 import { careerBySlug } from '../data/careers'
-import { pathwaysForCareer, orderByLean, bestMatch } from '../data/pathways'
+import { pathwaysForCareer } from '../data/pathways'
 import { subjectByName, coursesForSubject, titleCase, subjectSlug } from '../data/heap'
 import { student, loadDirection, suggestedLean } from '../data/student'
 
@@ -60,8 +60,7 @@ export default function CareerDetail() {
     )
   }
 
-  const routes = orderByLean(pathwaysForCareer(slug), lean)
-  const closest = bestMatch(pathwaysForCareer(slug), lean)
+  const routes = pathwaysForCareer(slug)
   const otherSubjects = career.heapSubjects.filter(
     (s) => subjectByName(s) && !routes.some((r) => r.subject === s),
   )
@@ -104,16 +103,14 @@ export default function CareerDetail() {
       </div>
       {routes.length > 0 && (
         <div>
-          <p className="font-bold text-gray-700">Routes into this career</p>
-          <p className="mt-1 text-sm text-gray-500">
-            There is more than one way in. Each route below shows the steps, how long it takes and
-            whether you earn along the way — ordered to match where your direction dial currently sits.
+          <p className="font-bold text-gray-700">
+            Routes to becoming {/^[aeiou]/i.test(career.title) ? 'an' : 'a'} {career.title.toLowerCase()}
           </p>
-          <div className="mt-3 space-y-4">
-            {routes.map((r) => (
-              <Pathway key={r.name} route={r} matches={r === closest} />
-            ))}
-          </div>
+          <p className="mt-1 mb-3 text-sm text-gray-500">
+            There is more than one way to get there. Compare them on the same timeline — how long
+            each takes, and what each one asks of you.
+          </p>
+          <RouteComparison routes={routes} lean={lean} />
         </div>
       )}
 
