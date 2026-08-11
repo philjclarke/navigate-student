@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import {
-  GraduationCap, House, PoundSterling, Brain, Users, Sparkles, ArrowRight, Flag,
+  GraduationCap, House, PoundSterling, Brain, Users, Sparkles, ArrowRight, Flag, Lightbulb,
 } from 'lucide-react'
 import { ROUTE_TYPES, routeYears, orderWorkFirst, closestToLean } from '../data/pathways'
 import { subjectByName, subjectReach, typicalOfferForSubject, titleCase, subjectSlug } from '../data/heap'
@@ -26,35 +26,34 @@ const FACTOR_META = [
   ['competition', Users, 'What makes it hard'],
 ]
 
+const formatYears = (y) =>
+  y === 0.5 ? '6 months' : `${y} ${y === 1 ? 'year' : 'years'}`
+
+/* Stages are laid out with flex-grow proportional to their length, so the
+   scale holds — but each carries a minimum width so short stages stay
+   readable rather than collapsing into a sliver. Flexbox absorbs the
+   difference in the trailing spacer, so stages can never overlap. */
 function Track({ route, axisMax }) {
   const accent = ROUTE_TYPES[route.type].accent
-  let offset = 0
+  const total = routeYears(route)
   return (
-    <div className="relative h-16">
-      {route.steps.map((s, i) => {
-        const left = (offset / axisMax) * 100
-        const width = (s.years / axisMax) * 100
-        offset += s.years
-        return (
-          <div
-            key={s.label}
-            title={`${s.label} — ${s.detail}`}
-            style={{
-              left: `${left}%`,
-              width: `calc(${width}% - 4px)`,
-              minWidth: '4.5rem',
-            }}
-            className={`absolute top-0 flex h-16 flex-col justify-center overflow-hidden rounded-md px-2 ${
-              SEG[accent][s.kind === 'college' ? 0 : 1]
-            }`}
-          >
-            <p className="text-xs leading-tight font-bold">{s.label}</p>
-            <p className="text-[10px] leading-tight opacity-90">
-              {s.years === 0.5 ? '6 months' : `${s.years} ${s.years === 1 ? 'year' : 'years'}`}
-            </p>
-          </div>
-        )
-      })}
+    <div className="flex h-16 gap-1">
+      {route.steps.map((s) => (
+        <div
+          key={s.label}
+          title={`${s.label} — ${s.detail}`}
+          style={{ flexGrow: s.years, flexBasis: 0, minWidth: '5.5rem' }}
+          className={`flex h-16 flex-col justify-center overflow-hidden rounded-md px-2.5 ${
+            SEG[accent][s.kind === 'college' ? 0 : 1]
+          }`}
+        >
+          <p className="text-xs leading-tight font-bold">{s.label}</p>
+          <p className="text-[10px] leading-tight opacity-90">{formatYears(s.years)}</p>
+        </div>
+      ))}
+      {axisMax > total && (
+        <div style={{ flexGrow: axisMax - total, flexBasis: 0 }} aria-hidden="true" />
+      )}
     </div>
   )
 }
@@ -133,18 +132,33 @@ export default function RouteComparison({ routes, lean }) {
               ))}
             </div>
 
-            {/* Real HEAP data where the route passes through study */}
-            {subject && reach?.courses > 0 && (
-              <Link
-                to={`/future/subject/${subjectSlug(route.subject)}`}
-                className={`mt-3 flex flex-wrap items-center gap-x-2 rounded-lg px-3 py-2 text-xs font-semibold ${accent.chip}`}
-              >
-                <GraduationCap size={14} />
-                {titleCase(route.subject)} — {reach.courses} courses at {reach.institutions} universities &amp; colleges
-                {offer && <span className="opacity-80">· typical offer {offer}</span>}
-                <ArrowRight size={13} className="ml-auto" />
-              </Link>
-            )}
+            {/* One clear next action per route, matched to how you'd actually
+                pursue it: courses for a degree, Navigate's own Opportunities
+                area for the routes that start with finding an employer. */}
+            {route.type === 'degree'
+              ? subject && reach?.courses > 0 && (
+                  <Link
+                    to={`/future/subject/${subjectSlug(route.subject)}`}
+                    className={`mt-3 flex flex-wrap items-center gap-x-2 rounded-lg px-3 py-2 text-xs font-semibold ${accent.chip}`}
+                  >
+                    <GraduationCap size={14} />
+                    {titleCase(route.subject)} — {reach.courses} courses at {reach.institutions} universities &amp; colleges
+                    {offer && <span className="opacity-80">· typical offer {offer}</span>}
+                    <ArrowRight size={13} className="ml-auto" />
+                  </Link>
+                )
+              : (
+                  <Link
+                    to="/opportunities"
+                    className={`mt-3 flex flex-wrap items-center gap-x-2 rounded-lg px-3 py-2 text-xs font-semibold ${accent.chip}`}
+                  >
+                    <Lightbulb size={14} />
+                    {route.type === 'apprenticeship'
+                      ? 'Find apprenticeships and employers on Navigate'
+                      : 'Find placements and work opportunities on Navigate'}
+                    <ArrowRight size={13} className="ml-auto" />
+                  </Link>
+                )}
           </div>
         )
       })}
