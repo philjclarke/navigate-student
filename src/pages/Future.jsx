@@ -1,156 +1,75 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  Signpost, BriefcaseBusiness, GraduationCap, Compass, Sparkles, Info,
-  ChevronRight, Wrench,
-} from 'lucide-react'
-import { Card, Button, StatusPill } from '../components/ui'
+import { Signpost, Compass, Info, ChevronRight, ClipboardList, Sparkles } from 'lucide-react'
+import { Card, Button } from '../components/ui'
 import DirectionWizard from '../components/DirectionWizard'
+import DestinationGauge from '../components/DestinationGauge'
+import ExploreColumn from '../components/ExploreColumn'
 import signpostImg from '../assets/my-future-signpost.png'
-import { subjectByName, coursesForSubject, titleCase, subjectSlug } from '../data/heap'
-import { student, signals, suggestedLean, loadDirection, saveDirection } from '../data/student'
+import { EXPLORE_SECTIONS, ROUTE_TYPES, orderForGauge } from '../data/pathways'
+import {
+  student, signals, surveys, suggestedLean, loadDirection, saveDirection,
+  overallConfidence, leastKnownRoute, routeState,
+} from '../data/student'
 
-import { careerBySlug } from '../data/careers'
-import { pathwaysForCareer } from '../data/pathways'
-import RouteCard from '../components/RouteCard'
+/* "What we recommend" is the anti-silo mechanism: in each column it can point
+   somewhere else entirely, so a student deep in one route still hears about
+   the others. */
+function recommendationFor(type, lean) {
+  const least = leastKnownRoute()
+  const nearest = orderForGauge(
+    EXPLORE_SECTIONS.map((s) => ({ type: s.type })), lean,
+  )[0].type
 
-const CAREERS = [
-  { slug: 'arborist-tree-surgeon', pill: 'Favourited', reason: 'You favourited this career' },
-  { slug: 'museum-curator', pill: 'New match', reason: 'Linked to your Archaeology interest' },
-  { slug: 'cartoonist', pill: 'Favourited', reason: 'You favourited this career' },
-  { slug: 'field-archaeologist', pill: 'New match', reason: 'Direct route from your destination subject' },
-].map((c) => ({ ...c, ...careerBySlug(c.slug) }))
-
-function DirectionDial({ lean, dataLean, onChange }) {
-  return (
-    <div>
-      <div className="relative pt-8">
-        {/* data suggestion marker — transparent to clicks so it never blocks the thumb */}
-        <div
-          className="pointer-events-none absolute top-0 -translate-x-1/2 text-center"
-          style={{ left: `${dataLean}%` }}
-        >
-          <span className="rounded-full bg-gray-700 px-2 py-0.5 text-[10px] font-bold whitespace-nowrap text-white">
-            our suggestion
-          </span>
-          <div className="mx-auto h-3 w-px bg-gray-700" />
-        </div>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={lean}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="direction-dial w-full"
-          aria-label="Your direction between work and university"
-        />
-      </div>
-      <div className="mt-1 flex justify-between text-xs font-bold text-gray-500">
-        <span className="flex items-center gap-1"><Wrench size={12} /> Straight into work</span>
-        <span>Earn while learning</span>
-        <span className="flex items-center gap-1"><GraduationCap size={13} /> University</span>
-      </div>
-    </div>
-  )
+  if (type === least && type !== nearest) {
+    return `Your gauge sits away from here, but we know least about this route. Worth a look before you rule it out.`
+  }
+  if (type === 'apprenticeship' && lean > 65) {
+    return `You're leaning towards university — but Archaeology has a salaried apprenticeship route that reaches the same jobs without the debt.`
+  }
+  if (type === 'degree' && lean < 40) {
+    return `You're leaning towards work. Some of the careers you've saved do ask for a degree, so it's worth knowing what that route looks like.`
+  }
+  if (type === nearest) {
+    return `This is closest to where you've set your gauge, so we'd start here.`
+  }
+  /* Every column says something — a column that stays silent is a column the
+     student quietly stops considering. */
+  return {
+    apprenticeship: `Apprenticeships exist in more fields than most people expect, including the ones you've been looking at.`,
+    tlevel: `T-Levels include a substantial industry placement, which is worth knowing about even if you're heading elsewhere.`,
+    work: `Your saved careers live here — including how to reach them without a degree.`,
+    degree: `Not ruled out. Some of the careers you've saved list a degree as the usual route.`,
+  }[type]
 }
-
-function SubjectCard({ name }) {
-  const courses = coursesForSubject(name)
-  const unis = new Set(courses.map((c) => c.University))
-  const subj = subjectByName(name)
-  return (
-    <Card className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-purple-100 text-purple-600">
-          <GraduationCap size={17} />
-        </span>
-        <StatusPill>Subject area</StatusPill>
-      </div>
-      <h3 className="text-lg leading-snug font-bold text-gray-700">{titleCase(name)}</h3>
-      <p className="line-clamp-3 text-sm text-gray-500">{subj?.Intro}</p>
-      <p className="text-xs font-semibold text-gray-500">
-        {courses.length} courses · {unis.size} universities &amp; colleges
-      </p>
-      <Link to={`/future/subject/${subjectSlug(name)}`} className="mt-auto">
-        <Button small>Explore subject</Button>
-      </Link>
-    </Card>
-  )
-}
-
-const routeOfType = (slug, type) => pathwaysForCareer(slug).find((r) => r.type === type)
 
 export default function Future() {
   const [direction, setDirection] = useState(loadDirection)
   const [wizardOpen, setWizardOpen] = useState(false)
-  const [filter, setFilter] = useState('All')
   const [showSignals, setShowSignals] = useState(false)
 
   const dataLean = suggestedLean()
   const lean = direction.lean ?? dataLean
+  const confidence = overallConfidence()
 
   const update = (next) => {
     setDirection(next)
     saveDirection(next)
   }
 
-  const interests = direction.interests
-
-  const showCareers = filter === 'All' || filter === 'Careers'
-  const showCourses = filter === 'All' || filter === 'University'
-  const showRoutes = filter === 'All' || filter === 'Apprenticeships'
-
-  /* The dial reorders the feed, but work-based options never come last —
-     Navigate leads with the world of work rather than pushing university. */
-  const academicFirst = lean >= 50
-
-  /* Which route we champion in the feed. Apprenticeships lead by default;
-     a strongly vocational dial swaps in the straight-into-work route. The
-     Apprenticeships filter always means apprenticeships, for every career. */
-  const routes = useMemo(() => {
-    if (filter === 'Apprenticeships') {
-      return CAREERS.map((c) => ({ career: c, route: routeOfType(c.slug, 'apprenticeship') }))
-    }
-    const type = lean <= 35 ? 'work' : 'apprenticeship'
-    return CAREERS.slice(0, 3).map((c) => ({ career: c, route: routeOfType(c.slug, type) }))
-  }, [filter, lean])
-
-  const careerCards = showCareers && CAREERS.map((c) => (
-    <Card key={c.title} className="flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-600">
-          <BriefcaseBusiness size={17} />
-        </span>
-        <StatusPill>{c.pill}</StatusPill>
-      </div>
-      <h3 className="text-lg leading-snug font-bold text-gray-700">{c.title}</h3>
-      <p className="flex items-center gap-1.5 text-xs font-semibold text-brand-600">
-        <Sparkles size={12} /> {c.reason}
-      </p>
-      <p className="line-clamp-3 text-sm text-gray-500">{c.summary}</p>
-      <div className="mt-auto">
-        <Link to={`/future/career/${c.slug}`}><Button small>View Career</Button></Link>
-      </div>
-    </Card>
-  ))
-
-  const subjectCards = showCourses && interests.map((name) => <SubjectCard key={name} name={name} />)
-  const routeCards = showRoutes && routes
-    .filter((r) => r.route)
-    .map(({ career, route }) => (
-      <RouteCard key={`${career.slug}-${route.type}`} career={career} route={route} />
-    ))
+  const ordered = orderForGauge(EXPLORE_SECTIONS, lean)
+  const leadType = ordered[0].type
 
   return (
     <div className="space-y-6">
-      {/* Banner + direction dial */}
+      {/* Banner + gauge */}
       <div className="rounded-2xl bg-brand-100 p-7">
         <div className="grid items-center gap-6 lg:grid-cols-[3fr_2fr]">
           <div>
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="flex items-center gap-1.5 text-sm font-bold text-brand-600">
-                  <Signpost size={16} /> Future
+                  <Signpost size={16} /> Navigate Next
                 </p>
                 <h1 className="mt-2 text-3xl font-light text-gray-600 md:text-4xl">My Future</h1>
               </div>
@@ -161,14 +80,14 @@ export default function Future() {
               </Button>
             </div>
             <p className="mt-3 text-sm text-gray-600">
-              Your gateway to what comes after college — careers, university courses and
-              apprenticeships, shaped around what we're learning about you. It's always
-              your choice: slide the dial to explore in any direction.
+              Wherever you're heading after college — a job, an apprenticeship, technical study
+              or university — this is where you work it out. Move the gauge to explore in any
+              direction. It's always your choice.
             </p>
 
             <Card className="mt-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-bold text-gray-700">Your direction</p>
+                <p className="font-bold text-gray-700">Your next destination</p>
                 <button
                   onClick={() => setShowSignals(!showSignals)}
                   className="flex items-center gap-1.5 text-xs font-semibold text-brand-600 hover:text-brand-700"
@@ -176,30 +95,14 @@ export default function Future() {
                   <Info size={13} /> Why do we suggest this?
                 </button>
               </div>
-              <div className="mt-3">
-                <DirectionDial
+              <div className="mt-2">
+                <DestinationGauge
                   lean={lean}
                   dataLean={dataLean}
+                  confidence={confidence}
                   onChange={(v) => update({ ...direction, lean: v })}
                 />
               </div>
-              <p className="mt-3 text-center text-sm text-gray-600" aria-live="polite">
-                {lean >= 65 ? (
-                  <>You're exploring <strong>university and college courses</strong> first</>
-                ) : lean <= 35 ? (
-                  <>You're exploring <strong>careers and apprenticeships</strong> first</>
-                ) : (
-                  <>You're exploring <strong>a balanced mix</strong> of careers and courses</>
-                )}
-                {lean !== dataLean && (
-                  <button
-                    onClick={() => update({ ...direction, lean: dataLean })}
-                    className="ml-2 text-xs font-semibold text-brand-600 hover:text-brand-700"
-                  >
-                    Reset to our suggestion
-                  </button>
-                )}
-              </p>
               {showSignals && (
                 <div className="mt-4 rounded-lg bg-brand-50 p-4">
                   <p className="text-xs font-bold tracking-wide text-gray-500 uppercase">
@@ -214,7 +117,7 @@ export default function Future() {
                     ))}
                   </ul>
                   <p className="mt-3 text-xs text-gray-500">
-                    These signals only shape the order of suggestions — they never limit what you can explore.
+                    These signals shape the order things appear in — they never limit what you can explore.
                   </p>
                 </div>
               )}
@@ -229,56 +132,83 @@ export default function Future() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_290px]">
-        <div>
-          {/* Filter */}
-          <div className="mb-4 flex flex-wrap gap-2">
-            {['All', 'Careers', 'Apprenticeships', 'University'].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
-                  filter === f ? 'bg-brand-500 text-white' : 'bg-white text-gray-600 hover:bg-brand-100'
-                }`}
-              >
-                {f === 'University' ? 'University & courses' : f}
-              </button>
-            ))}
+      {/* Confidence strand */}
+      <Card className="border border-brand-300">
+        <div className="grid gap-5 lg:grid-cols-[300px_1fr]">
+          <div>
+            <p className="flex items-center gap-1.5 text-sm font-bold text-gray-700">
+              <ClipboardList size={15} className="text-brand-500" /> How well do we know you?
+            </p>
+            <p className="mt-2 text-3xl font-light text-gray-700">{confidence}%</p>
+            <p className="mt-1 text-sm text-gray-500">
+              We're most sure about {ROUTE_TYPES.degree.short.toLowerCase()} and least sure about{' '}
+              {ROUTE_TYPES[leastKnownRoute()].short.toLowerCase()}. Answering a few more questions
+              makes every suggestion on this page better.
+            </p>
+            <div className="mt-3 space-y-1.5">
+              {Object.entries(routeState).map(([type, s]) => (
+                <div key={type} className="flex items-center gap-2">
+                  <span className="w-28 shrink-0 text-xs text-gray-500">{ROUTE_TYPES[type].short}</span>
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full rounded-full bg-gray-500" style={{ width: `${s.confidence}%` }} />
+                  </div>
+                  <span className="w-8 text-right text-xs text-gray-400">{s.confidence}%</span>
+                </div>
+              ))}
+            </div>
           </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {academicFirst
-              ? [routeCards, subjectCards, careerCards]
-              : [careerCards, routeCards, subjectCards]}
+          <div>
+            <p className="mb-2 text-sm font-bold text-gray-700">Surveys and assessments</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {surveys.map((s) => (
+                <div key={s.title} className="rounded-xl border border-gray-200 p-3">
+                  <p className="text-sm leading-snug font-bold text-gray-700">{s.title}</p>
+                  <p className="mt-0.5 text-xs text-gray-500">Improves our view of {s.raises}</p>
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-full rounded-full bg-brand-500" style={{ width: `${s.progress}%` }} />
+                  </div>
+                  <button className="mt-2 text-xs font-bold text-brand-600 hover:text-brand-700">
+                    {s.cta} →
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+      </Card>
 
-        {/* Right rail */}
-        <aside className="space-y-4">
-          <Card className="border border-purple-200">
-            <p className="text-xs font-bold tracking-wide text-gray-500 uppercase">Your next destination</p>
-            <p className="mt-1 text-lg font-semibold text-purple-700">{student.destination.pathway}</p>
-            <p className="text-sm text-purple-600">{student.destination.focus}</p>
-            <div className="mt-3 rounded-lg bg-brand-50 p-3 text-sm text-gray-600">
-              <p className="flex items-start gap-1.5">
-                <Sparkles size={14} className="mt-0.5 shrink-0 text-brand-500" />
-                Your recent activity still supports this — Archaeology courses are shown in
-                your feed. If your direction shifts, we'll let you know before suggesting a change.
-              </p>
-            </div>
-            <p className="mt-3 text-xs text-gray-400">Changing your destination is always your choice.</p>
-          </Card>
-          <Link to="/future/careers-bank" className="block">
-            <Button variant="secondary" className="w-full">Go to the Careers Bank</Button>
-          </Link>
-        </aside>
+      {/* The four routes */}
+      <div>
+        <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-2xl font-light text-gray-600">Where could you go next?</h2>
+          <p className="flex items-center gap-1.5 text-xs text-gray-500">
+            <Sparkles size={12} className="text-brand-500" />
+            Ordered by where your gauge sits — {ROUTE_TYPES[leadType].short.toLowerCase()} first
+          </p>
+        </div>
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {ordered.map((section) => (
+            <ExploreColumn
+              key={section.key}
+              section={section}
+              recommendation={recommendationFor(section.type, lean)}
+            />
+          ))}
+        </div>
       </div>
 
-      <DirectionWizard
-        open={wizardOpen}
-        onClose={() => setWizardOpen(false)}
-        onComplete={update}
-      />
+      <div className="flex flex-wrap gap-3">
+        <Link to="/future/careers-bank">
+          <Button variant="secondary">Go to the Careers Bank</Button>
+        </Link>
+        <div className="rounded-lg bg-purple-50 px-4 py-2.5 text-sm">
+          <span className="text-gray-500">Your declared destination:</span>{' '}
+          <strong className="text-purple-700">{student.destination.pathway}</strong>
+          <span className="text-purple-600"> · {student.destination.focus}</span>
+        </div>
+      </div>
+
+      <DirectionWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={update} />
     </div>
   )
 }

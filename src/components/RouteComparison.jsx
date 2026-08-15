@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import {
   GraduationCap, House, PoundSterling, Brain, Users, Sparkles, ArrowRight, Flag, Lightbulb,
 } from 'lucide-react'
-import { ROUTE_TYPES, routeYears, orderWorkFirst, closestToLean } from '../data/pathways'
+import { ROUTE_TYPES, routeYears, orderForGauge, closestToLean } from '../data/pathways'
 import { subjectByName, subjectReach, typicalOfferForSubject, titleCase, subjectSlug } from '../data/heap'
 
 const ACCENT = {
   amber: { head: 'text-amber-600', border: 'border-amber-300', chip: 'bg-amber-500/15 text-amber-700', dot: 'bg-amber-500' },
+  sky: { head: 'text-sky-700', border: 'border-sky-300', chip: 'bg-sky-100 text-sky-700', dot: 'bg-sky-500' },
   teal: { head: 'text-brand-700', border: 'border-brand-300', chip: 'bg-brand-100 text-brand-700', dot: 'bg-brand-500' },
   purple: { head: 'text-purple-700', border: 'border-purple-300', chip: 'bg-purple-100 text-purple-700', dot: 'bg-purple-500' },
 }
@@ -15,6 +16,7 @@ const ACCENT = {
    groundwork and the committing stage read as the substance of the route. */
 const SEG = {
   amber: ['bg-amber-500/25 text-amber-700', 'bg-amber-500 text-white'],
+  sky: ['bg-sky-200 text-sky-800', 'bg-sky-500 text-white'],
   teal: ['bg-brand-300 text-brand-800', 'bg-brand-500 text-white'],
   purple: ['bg-purple-200 text-purple-800', 'bg-purple-500 text-white'],
 }
@@ -60,7 +62,7 @@ function Track({ route, axisMax }) {
 
 export default function RouteComparison({ routes, lean }) {
   if (!routes.length) return null
-  const ordered = orderWorkFirst(routes)
+  const ordered = orderForGauge(routes, lean)
   const closest = closestToLean(routes, lean)
   const axisMax = Math.max(...routes.map(routeYears))
   const ticks = Array.from({ length: Math.floor(axisMax) + 1 }, (_, i) => i)
@@ -164,8 +166,8 @@ export default function RouteComparison({ routes, lean }) {
       })}
 
       <p className="text-xs text-gray-400">
-        Routes are shown work-first — apprenticeships lead, because earning while you learn is a
-        real option here. Your dial doesn't reorder them, it just marks the closest match.
+        Routes are ordered by where your gauge sits, with technical and vocational routes leading
+        when it's line-ball. Nothing here is ruled out — the order is a starting point, not a ranking.
       </p>
     </div>
   )

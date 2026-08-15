@@ -27,6 +27,42 @@ body {
   @apply bg-brand-50 font-sans text-gray-700 antialiased;
 }
 
+/* Next destination gauge — four zones: work, apprenticeship, technical, university */
+.destination-gauge {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--color-brand-400) 0%,
+    var(--color-amber-500) 37%,
+    #38bdf8 63%,
+    #a78bfa 100%
+  );
+  outline: none;
+}
+.destination-gauge::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 26px;
+  width: 26px;
+  border-radius: 9999px;
+  background: #374151;
+  border: 4px solid white;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+}
+.destination-gauge::-moz-range-thumb {
+  height: 26px;
+  width: 26px;
+  border-radius: 9999px;
+  background: #374151;
+  border: 4px solid white;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+}
+
 /* Direction dial — teal (work) to purple (university) */
 .direction-dial {
   -webkit-appearance: none;

@@ -10,6 +10,7 @@ import Future from './pages/Future'
 import CareersBank from './pages/CareersBank'
 import SubjectDetail from './pages/SubjectDetail'
 import CareerDetail from './pages/CareerDetail'
+import ExploreSection from './pages/ExploreSection'
 import Profile from './pages/Profile'
 import DigitalCv from './pages/DigitalCv'
 
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/future/careers-bank" element={<CareersBank />} />
         <Route path="/future/subject/:subject" element={<SubjectDetail />} />
         <Route path="/future/career/:slug" element={<CareerDetail />} />
+        <Route path="/future/explore/:key" element={<ExploreSection />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/digital-cv" element={<DigitalCv />} />
       </Route>

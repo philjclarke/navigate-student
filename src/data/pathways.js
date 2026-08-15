@@ -8,11 +8,26 @@
    direction dial does not reorder them — it only marks which route sits
    closest to what the student has said they want. */
 
+/* The four next destinations. `lean` is where each sits on the gauge, from
+   straight into work through to university. `order` is Navigate's editorial
+   preference when the gauge gives us no steer — technical and vocational
+   routes lead, but the gauge always wins when the student has expressed one. */
 export const ROUTE_TYPES = {
-  apprenticeship: { label: 'Earn while you learn', lean: 45, accent: 'amber', order: 0 },
-  work: { label: 'Straight into work', lean: 12, accent: 'teal', order: 1 },
-  degree: { label: 'University degree', lean: 88, accent: 'purple', order: 2 },
+  apprenticeship: { label: 'Earn while you learn', short: 'Apprenticeship', lean: 37, accent: 'amber', order: 0 },
+  tlevel: { label: 'Technical study', short: 'T-Level or training', lean: 63, accent: 'sky', order: 1 },
+  work: { label: 'Straight into work', short: 'Job', lean: 10, accent: 'teal', order: 2 },
+  degree: { label: 'University degree', short: 'University', lean: 90, accent: 'purple', order: 3 },
 }
+
+/* The four Explore sections, in Navigate's default order. */
+export const EXPLORE_SECTIONS = [
+  { key: 'apprenticeships', type: 'apprenticeship', title: 'Explore Apprenticeships', blurb: 'Earn a wage while you gain a qualification.' },
+  { key: 'training', type: 'tlevel', title: 'Explore T-Levels and Training', blurb: 'Technical qualifications built with employers.' },
+  { key: 'jobs', type: 'work', title: 'Explore Jobs', blurb: 'Careers you could go into, and how to get there.' },
+  { key: 'university', type: 'degree', title: 'Explore University', blurb: 'Courses, entry requirements and what student life is like.' },
+]
+
+export const sectionByKey = (key) => EXPLORE_SECTIONS.find((s) => s.key === key)
 
 /* Standard factor set so routes can be compared like with like. */
 const F = (home, money, effort, competition) => ({ home, money, effort, competition })
@@ -298,9 +313,18 @@ export const pathwaysForCareer = (slug) => P[slug] || []
 /* Total years from now until you arrive. */
 export const routeYears = (route) => route.steps.reduce((n, s) => n + s.years, 0)
 
-/* World-of-work first: apprenticeship, then straight into work, then university. */
-export const orderWorkFirst = (routes) =>
-  [...routes].sort((a, b) => ROUTE_TYPES[a.type].order - ROUTE_TYPES[b.type].order)
+/* Ordering is by how close each route sits to where the student has set their
+   gauge, with Navigate's editorial preference breaking ties. That way the
+   platform can lead with technical routes without the order looking like a
+   ranking of life choices — and we can always say why the order is what it is. */
+export function orderForGauge(routes, lean) {
+  return [...routes].sort((a, b) => {
+    const da = Math.abs(ROUTE_TYPES[a.type].lean - lean)
+    const db = Math.abs(ROUTE_TYPES[b.type].lean - lean)
+    if (Math.abs(da - db) > 12) return da - db
+    return ROUTE_TYPES[a.type].order - ROUTE_TYPES[b.type].order
+  })
+}
 
 /* Which route sits closest to what the student has told us they want.
    Used only to mark a route, never to reorder them. */
