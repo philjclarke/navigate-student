@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import {
-  Home, Clock, Puzzle, Building2, Lightbulb, Target, Signpost, User, FilePen,
+  Home, Clock, Puzzle, Building2, Lightbulb, Target, Signpost, User, FilePen, GraduationCap,
   Mail, ChevronLeft, ChevronRight, Plus, Menu, X, Mic, SendHorizonal,
 } from 'lucide-react'
 import Flyout from './Flyout'
@@ -14,6 +14,7 @@ const NAV = [
   { to: '/opportunities', label: 'Opportunities', icon: Lightbulb },
   { to: '/targets', label: 'Targets', icon: Target },
   { to: '/future', label: 'My Future', icon: Signpost },
+  { to: '/universities', label: 'Universities', icon: GraduationCap },
   { to: '/profile', label: 'Profile', icon: User },
   { to: '/digital-cv', label: 'Digital CV', icon: FilePen },
 ]

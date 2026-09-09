@@ -11,6 +11,10 @@ import CareersBank from './pages/CareersBank'
 import SubjectDetail from './pages/SubjectDetail'
 import CareerDetail from './pages/CareerDetail'
 import ExploreSection from './pages/ExploreSection'
+import Universities from './pages/Universities'
+import UniversityResults from './pages/UniversityResults'
+import InstitutionDetail from './pages/InstitutionDetail'
+import UniversityShortlist from './pages/UniversityShortlist'
 import Profile from './pages/Profile'
 import DigitalCv from './pages/DigitalCv'
 
@@ -29,6 +33,10 @@ export default function App() {
         <Route path="/future/subject/:subject" element={<SubjectDetail />} />
         <Route path="/future/career/:slug" element={<CareerDetail />} />
         <Route path="/future/explore/:key" element={<ExploreSection />} />
+        <Route path="/universities" element={<Universities />} />
+        <Route path="/universities/matches" element={<UniversityResults />} />
+        <Route path="/universities/shortlist" element={<UniversityShortlist />} />
+        <Route path="/universities/institution/:name" element={<InstitutionDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/digital-cv" element={<DigitalCv />} />
       </Route>

@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom'
 import {
-  Building, Hammer, Wrench, GraduationCap, Sparkles, ArrowRight, HelpCircle,
+  Building, Hammer, Wrench, GraduationCap, Sparkles, ArrowRight, HelpCircle, BookOpen,
 } from 'lucide-react'
 import { ROUTE_TYPES } from '../data/pathways'
 import { routeState } from '../data/student'
 
-const ICON = { apprenticeship: Building, tlevel: Hammer, work: Wrench, degree: GraduationCap }
+const ICON = { apprenticeship: Building, tlevel: Hammer, training: BookOpen, work: Wrench, degree: GraduationCap }
 
 const STYLE = {
   amber: { ring: 'border-amber-300', head: 'text-amber-600', icon: 'bg-amber-500/15 text-amber-500', bar: 'bg-amber-500', soft: 'bg-amber-500/10' },
   sky: { ring: 'border-sky-300', head: 'text-sky-700', icon: 'bg-sky-100 text-sky-600', bar: 'bg-sky-500', soft: 'bg-sky-50' },
+  rose: { ring: 'border-rose-300', head: 'text-rose-700', icon: 'bg-rose-100 text-rose-600', bar: 'bg-rose-500', soft: 'bg-rose-50' },
   teal: { ring: 'border-brand-300', head: 'text-brand-700', icon: 'bg-brand-100 text-brand-600', bar: 'bg-brand-500', soft: 'bg-brand-50' },
   purple: { ring: 'border-purple-300', head: 'text-purple-700', icon: 'bg-purple-100 text-purple-600', bar: 'bg-purple-500', soft: 'bg-purple-50' },
 }

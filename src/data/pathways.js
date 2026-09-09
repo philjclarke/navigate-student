@@ -13,16 +13,18 @@
    preference when the gauge gives us no steer — technical and vocational
    routes lead, but the gauge always wins when the student has expressed one. */
 export const ROUTE_TYPES = {
-  apprenticeship: { label: 'Earn while you learn', short: 'Apprenticeship', lean: 37, accent: 'amber', order: 0 },
-  tlevel: { label: 'Technical study', short: 'T-Level or training', lean: 63, accent: 'sky', order: 1 },
-  work: { label: 'Straight into work', short: 'Job', lean: 10, accent: 'teal', order: 2 },
-  degree: { label: 'University degree', short: 'University', lean: 90, accent: 'purple', order: 3 },
+  apprenticeship: { label: 'Earn while you learn', short: 'Apprenticeship', lean: 30, accent: 'amber', order: 0 },
+  tlevel: { label: 'Technical study', short: 'T-Level', lean: 68, accent: 'sky', order: 1 },
+  training: { label: 'Further training', short: 'More training', lean: 50, accent: 'rose', order: 2 },
+  work: { label: 'Straight into work', short: 'Job', lean: 10, accent: 'teal', order: 3 },
+  degree: { label: 'University degree', short: 'University', lean: 90, accent: 'purple', order: 4 },
 }
 
 /* The four Explore sections, in Navigate's default order. */
 export const EXPLORE_SECTIONS = [
   { key: 'apprenticeships', type: 'apprenticeship', title: 'Explore Apprenticeships', blurb: 'Earn a wage while you gain a qualification.' },
-  { key: 'training', type: 'tlevel', title: 'Explore T-Levels and Training', blurb: 'Technical qualifications built with employers.' },
+  { key: 'tlevels', type: 'tlevel', title: 'Explore T-Levels', blurb: 'Two-year technical qualifications with a real industry placement.' },
+  { key: 'training', type: 'training', title: 'Explore More Training', blurb: 'Short courses, traineeships and other ways to add a qualification.' },
   { key: 'jobs', type: 'work', title: 'Explore Jobs', blurb: 'Careers you could go into, and how to get there.' },
   { key: 'university', type: 'degree', title: 'Explore University', blurb: 'Courses, entry requirements and what student life is like.' },
 ]

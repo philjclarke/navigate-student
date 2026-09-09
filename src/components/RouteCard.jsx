@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Building, Wrench, GraduationCap, PoundSterling, House } from 'lucide-react'
+import { Building, Wrench, GraduationCap, PoundSterling, House, Hammer, BookOpen } from 'lucide-react'
 import { Card, Button, StatusPill } from './ui'
 import { ROUTE_TYPES, routeYears } from '../data/pathways'
 
@@ -7,9 +7,11 @@ const STYLE = {
   amber: { icon: 'bg-amber-500/15 text-amber-500', head: 'text-amber-600', bar: ['bg-amber-500/30', 'bg-amber-500'] },
   teal: { icon: 'bg-brand-100 text-brand-600', head: 'text-brand-700', bar: ['bg-brand-300', 'bg-brand-500'] },
   purple: { icon: 'bg-purple-100 text-purple-600', head: 'text-purple-700', bar: ['bg-purple-200', 'bg-purple-500'] },
+  sky: { icon: 'bg-sky-100 text-sky-600', head: 'text-sky-700', bar: ['bg-sky-200', 'bg-sky-500'] },
+  rose: { icon: 'bg-rose-100 text-rose-600', head: 'text-rose-700', bar: ['bg-rose-200', 'bg-rose-500'] },
 }
 
-const ICON = { apprenticeship: Building, work: Wrench, degree: GraduationCap }
+const ICON = { apprenticeship: Building, work: Wrench, degree: GraduationCap, tlevel: Hammer, training: BookOpen }
 
 /* A route card leads with the destination, not the subject — "become a field
    archaeologist, this way" — because a route only means anything once you

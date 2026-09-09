@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   ChevronLeft, Sparkles, PlayCircle, ClipboardCheck, Search, Bot, Bookmark,
-  Building, Hammer, Wrench, GraduationCap, Check, Send,
+  Building, Hammer, Wrench, GraduationCap, Check, Send, BookOpen, ArrowRight,
 } from 'lucide-react'
 import { Card, Button, ImagePlaceholder } from '../components/ui'
 import { sectionByKey, ROUTE_TYPES } from '../data/pathways'
@@ -10,11 +10,12 @@ import { routeState, loadDirection, suggestedLean } from '../data/student'
 import { allSubjects, titleCase, subjectSlug, subjectReach } from '../data/heap'
 import { careers } from '../data/careers'
 
-const ICON = { apprenticeship: Building, tlevel: Hammer, work: Wrench, degree: GraduationCap }
+const ICON = { apprenticeship: Building, tlevel: Hammer, training: BookOpen, work: Wrench, degree: GraduationCap }
 
 const STYLE = {
   amber: { ring: 'border-amber-300', head: 'text-amber-600', icon: 'bg-amber-500/15 text-amber-500', bar: 'bg-amber-500', soft: 'bg-amber-500/10', banner: 'bg-amber-500/10' },
   sky: { ring: 'border-sky-300', head: 'text-sky-700', icon: 'bg-sky-100 text-sky-600', bar: 'bg-sky-500', soft: 'bg-sky-50', banner: 'bg-sky-50' },
+  rose: { ring: 'border-rose-300', head: 'text-rose-700', icon: 'bg-rose-100 text-rose-600', bar: 'bg-rose-500', soft: 'bg-rose-50', banner: 'bg-rose-50' },
   teal: { ring: 'border-brand-300', head: 'text-brand-700', icon: 'bg-brand-100 text-brand-600', bar: 'bg-brand-500', soft: 'bg-brand-50', banner: 'bg-brand-100' },
   purple: { ring: 'border-purple-300', head: 'text-purple-700', icon: 'bg-purple-100 text-purple-600', bar: 'bg-purple-500', soft: 'bg-purple-50', banner: 'bg-purple-50' },
 }
@@ -28,10 +29,17 @@ const CONTENT = {
     searchLabel: 'Search apprenticeships',
     searchHint: 'By role, employer or sector',
   },
-  training: {
-    what: 'What are T-Levels and other training options?',
+  tlevels: {
+    what: 'What are T-Levels?',
     clips: ['T-Levels explained in 90 seconds', 'Meet Callum, on a construction T-Level', 'Placement year: what to expect'],
     prep: ['Check what your college offers', 'Talk to someone doing one', 'Understand how the placement works'],
+    searchLabel: 'Search training courses',
+    searchHint: 'By subject or provider',
+  },
+  training: {
+    what: 'What other training is out there?',
+    clips: ['Traineeships in 90 seconds', 'Meet Dev, on a Level 3 access course', 'Short courses that employers rate'],
+    prep: ['See what your college runs next term', 'Talk to your tutor about a bridging course', 'Check what funding you could get'],
     searchLabel: 'Search training courses',
     searchHint: 'By subject or provider',
   },
@@ -224,6 +232,13 @@ export default function ExploreSection() {
 
         {/* Right rail */}
         <aside className="space-y-4">
+          {key === 'university' && (
+            <Link to="/universities" className="block rounded-2xl bg-purple-600 p-4 text-white hover:bg-purple-700">
+              <p className="flex items-center gap-2 font-bold"><GraduationCap size={16} /> Find a university</p>
+              <p className="mt-1 text-xs text-purple-100">Answer a few questions about how you want to live and study, and we'll match real courses to you.</p>
+              <p className="mt-2 flex items-center gap-1 text-xs font-bold">Open the university finder <ArrowRight size={13} /></p>
+            </Link>
+          )}
           <Card className={`border-2 ${style.ring}`}>
             <p className="text-xs font-bold tracking-wide text-gray-500 uppercase">
               Your {meta.short.toLowerCase()} readiness

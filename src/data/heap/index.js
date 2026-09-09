@@ -8,12 +8,38 @@ import sampleUniversities from './sample/universities.json'
 const full = import.meta.glob('./full/*.json', { eager: true })
 const pick = (name, fallback) => full[`./full/${name}.json`]?.default ?? fallback
 
-const subjects = pick('subjects', sampleSubjects)
-const courses = pick('courses', sampleCourses)
-const universities = pick('universities', sampleUniversities)
+/* HEAP lives in varchar columns with a Latin-1 collation, so UTF-8 characters
+   such as £ and – arrive double-encoded ("Â£", "â€"). Undo that once at load;
+   anything that isn't pure Latin-1 or fails to decode is left untouched. */
+/* The collation is Windows-1252, so bytes 0x80–0x9F surfaced as €, “, – etc.
+   Map those back before treating the string as raw UTF-8 bytes. */
+const CP1252 = { '€': 0x80, '‚': 0x82, 'ƒ': 0x83, '„': 0x84, '…': 0x85, '†': 0x86, '‡': 0x87, 'ˆ': 0x88,
+  '‰': 0x89, 'Š': 0x8a, '‹': 0x8b, 'Œ': 0x8c, 'Ž': 0x8e, '‘': 0x91, '’': 0x92, '“': 0x93, '”': 0x94,
+  '•': 0x95, '–': 0x96, '—': 0x97, '˜': 0x98, '™': 0x99, 'š': 0x9a, '›': 0x9b, 'œ': 0x9c, 'ž': 0x9e, 'Ÿ': 0x9f }
+function fixText(s) {
+  if (typeof s !== 'string' || !/[Ââ]/.test(s)) return s
+  const bytes = new Uint8Array(s.length)
+  for (let i = 0; i < s.length; i++) {
+    const code = s.charCodeAt(i)
+    if (code < 256) bytes[i] = code
+    else if (CP1252[s[i]] != null) bytes[i] = CP1252[s[i]]
+    else return s
+  }
+  try { return new TextDecoder('utf-8', { fatal: true }).decode(bytes) } catch { return s }
+}
+const repair = (rows) => rows.map((r) => {
+  const o = {}
+  for (const k in r) o[k] = fixText(r[k])
+  return o
+})
+
+const subjects = repair(pick('subjects', sampleSubjects))
+const courses = repair(pick('courses', sampleCourses))
+const universities = repair(pick('universities', sampleUniversities))
 
 export const allSubjects = subjects
 export const allUniversities = universities
+export const allCourses = courses
 
 const uniIndex = new Map(universities.map((u) => [u.University, u]))
 

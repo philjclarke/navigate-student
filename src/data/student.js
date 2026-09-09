@@ -34,6 +34,11 @@ export const routeState = {
     readiness: { done: 2, total: 6 },
     gap: 'You haven\'t told us much about technical study yet',
   },
+  training: {
+    confidence: 20,
+    readiness: { done: 0, total: 5 },
+    gap: 'We don\'t know yet whether shorter training options appeal to you',
+  },
   work: {
     confidence: 58,
     readiness: { done: 3, total: 5 },

@@ -38,6 +38,7 @@ function recommendationFor(type, lean) {
   return {
     apprenticeship: `Apprenticeships exist in more fields than most people expect, including the ones you've been looking at.`,
     tlevel: `T-Levels include a substantial industry placement, which is worth knowing about even if you're heading elsewhere.`,
+    training: `Shorter courses and traineeships can be a stepping stone into any of the other routes.`,
     work: `Your saved careers live here — including how to reach them without a degree.`,
     degree: `Not ruled out. Some of the careers you've saved list a degree as the usual route.`,
   }[type]
@@ -186,7 +187,7 @@ export default function Future() {
             Ordered by where your gauge sits — {ROUTE_TYPES[leadType].short.toLowerCase()} first
           </p>
         </div>
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           {ordered.map((section) => (
             <ExploreColumn
               key={section.key}

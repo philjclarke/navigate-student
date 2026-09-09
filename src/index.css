@@ -36,8 +36,9 @@ body {
   background: linear-gradient(
     to right,
     var(--color-brand-400) 0%,
-    var(--color-amber-500) 37%,
-    #38bdf8 63%,
+    var(--color-amber-500) 30%,
+    #fb7185 50%,
+    #38bdf8 68%,
     #a78bfa 100%
   );
   outline: none;

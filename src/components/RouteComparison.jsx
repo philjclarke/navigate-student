@@ -8,6 +8,7 @@ import { subjectByName, subjectReach, typicalOfferForSubject, titleCase, subject
 const ACCENT = {
   amber: { head: 'text-amber-600', border: 'border-amber-300', chip: 'bg-amber-500/15 text-amber-700', dot: 'bg-amber-500' },
   sky: { head: 'text-sky-700', border: 'border-sky-300', chip: 'bg-sky-100 text-sky-700', dot: 'bg-sky-500' },
+  rose: { head: 'text-rose-700', border: 'border-rose-300', chip: 'bg-rose-100 text-rose-700', dot: 'bg-rose-500' },
   teal: { head: 'text-brand-700', border: 'border-brand-300', chip: 'bg-brand-100 text-brand-700', dot: 'bg-brand-500' },
   purple: { head: 'text-purple-700', border: 'border-purple-300', chip: 'bg-purple-100 text-purple-700', dot: 'bg-purple-500' },
 }
@@ -17,6 +18,7 @@ const ACCENT = {
 const SEG = {
   amber: ['bg-amber-500/25 text-amber-700', 'bg-amber-500 text-white'],
   sky: ['bg-sky-200 text-sky-800', 'bg-sky-500 text-white'],
+  rose: ['bg-rose-200 text-rose-800', 'bg-rose-500 text-white'],
   teal: ['bg-brand-300 text-brand-800', 'bg-brand-500 text-white'],
   purple: ['bg-purple-200 text-purple-800', 'bg-purple-500 text-white'],
 }

@@ -1,9 +1,10 @@
-import { Wrench, Building, GraduationCap, Hammer } from 'lucide-react'
+import { Wrench, Building, GraduationCap, Hammer, BookOpen } from 'lucide-react'
 import { ROUTE_TYPES } from '../data/pathways'
 
 const ZONES = [
   { type: 'work', icon: Wrench },
   { type: 'apprenticeship', icon: Building },
+  { type: 'training', icon: BookOpen },
   { type: 'tlevel', icon: Hammer },
   { type: 'degree', icon: GraduationCap },
 ]
@@ -41,7 +42,7 @@ export default function DestinationGauge({ lean, dataLean, confidence, onChange 
       </div>
 
       {/* Zone labels */}
-      <div className="mt-2 grid grid-cols-4 gap-1">
+      <div className="mt-2 grid grid-cols-5 gap-1">
         {ZONES.map(({ type, icon: Icon }) => {
           const active = nearest.type === type
           return (
