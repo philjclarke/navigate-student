@@ -148,6 +148,9 @@ export default function Universities() {
 
           <Q n={3} title="How much does cost matter?">
             <Options items={COST} value={prefs.cost} onChange={(v) => set({ cost: v })} />
+            <p className="mt-1.5 text-xs text-gray-400">
+              Home tuition fees are the same everywhere (£9,535), so this will start to matter once we can compare living costs — HEAP doesn't hold those yet.
+            </p>
           </Q>
 
           <Q n={4} title="What shape of course?">

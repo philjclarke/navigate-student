@@ -158,8 +158,8 @@ export default function UniversityResults() {
                     <Sparkles size={11} className="text-purple-400" /> {r}
                   </li>
                 ))}
-                {c.inst?.Fees && !c.reasons.some((r) => r.startsWith('Lower fees')) && (
-                  <li className="text-xs text-gray-400">Fees: {c.inst.Fees.slice(0, 60)}</li>
+                {c.inst?.Fees && (
+                  <li className="text-xs text-gray-400">International fees: {c.inst.Fees.slice(0, 60)}</li>
                 )}
               </ul>
 

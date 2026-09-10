@@ -130,7 +130,8 @@ export default function InstitutionDetail() {
           )}
           <Block icon={Info} title="Getting in">{inst.AdmissionsInformation}</Block>
           <Block icon={PoundSterling} title="What it costs">
-            {inst.Fees && <p><strong>Fees:</strong> {inst.Fees}</p>}
+            <p><strong>Home fees:</strong> £9,535 a year (the UK cap) — HEAP doesn't list these per institution.</p>
+            {inst.Fees && <p className="mt-1"><strong>International fees:</strong> {inst.Fees}</p>}
             {inst.LivingCosts && <p className="mt-1"><strong>Living costs:</strong> {inst.LivingCosts}</p>}
             {inst.NoteAboutCosts && <p className="mt-1 text-gray-500">{inst.NoteAboutCosts}</p>}
           </Block>

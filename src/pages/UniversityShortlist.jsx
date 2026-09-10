@@ -57,7 +57,7 @@ export default function UniversityShortlist() {
               <table className="w-full text-sm">
                 <thead className="bg-purple-50 text-left text-[11px] font-bold tracking-wide text-gray-500 uppercase">
                   <tr>
-                    <th className="p-3">Course</th><th className="p-3">From home</th><th className="p-3">Offer</th><th className="p-3">Fees</th><th className="p-3"></th>
+                    <th className="p-3">Course</th><th className="p-3">From home</th><th className="p-3">Offer</th><th className="p-3">Intl fees</th><th className="p-3"></th>
                   </tr>
                 </thead>
                 <tbody>

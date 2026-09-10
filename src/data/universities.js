@@ -23,11 +23,17 @@ export function gradesToPoints(grades) {
 }
 
 export function offerPoints(course) {
-  const fromGrades = gradesToPoints((course.GradesOffer || '').replace(/[^A-E*]/gi, ''))
-  if (fromGrades && fromGrades >= 48) return fromGrades
   const m = (course.PointsOfferBand || '').match(/(\d{2,3})/)
-  return m ? Number(m[1]) : null
+  if (m) return Number(m[1])
+  const bare = (course.GradesOffer || '').trim().replace(/\.$/, '')
+  return /^[A-E*]{2,4}$/i.test(bare) ? gradesToPoints(bare) : null
 }
+
+/* HEAP has no placement-year flag. Only claim one when the course says so. */
+export const hasPlacementYear = (course) =>
+  /sandwich|placement|industr|professional practice|year in industry/i.test(
+    `${course.CourseName || ''} ${course.LengthOfFullTimeCourse || ''}`,
+  )
 
 /* safe / reach / stretch, or null when either side is unknown. */
 export function reachFor(studentPoints, course) {
@@ -124,11 +130,12 @@ export function findCourses(prefs) {
       }
       const len = c.LengthOfFullTimeCourse || ''
       if (prefs.shape === 'three' && /^3/.test(len)) { score += 8; reasons.push('Three-year course') }
-      if (prefs.shape === 'placement' && /4|sandwich|placement/i.test(len + (c.CourseName || ''))) {
+      if (prefs.shape === 'placement' && hasPlacementYear(c)) {
         score += 12; reasons.push('Includes a placement year')
       }
-      const fees = parseFees(inst?.Fees)
-      if (prefs.cost === 'low' && fees && fees < 9250) { score += 10; reasons.push(`Lower fees — ${inst.Fees}`) }
+      /* HEAP's Fees field holds INTERNATIONAL fees (median ~£18k), and it has no
+         home-fee or living-cost data. Home fees are flat across the UK, so cost
+         can't yet differentiate courses — the preference is recorded, not scored. */
 
       const reach = reachFor(studentPoints, c)
       if (reach === 'safe') score += 6
