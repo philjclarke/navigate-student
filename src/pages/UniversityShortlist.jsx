@@ -57,7 +57,7 @@ export default function UniversityShortlist() {
               <table className="w-full text-sm">
                 <thead className="bg-purple-50 text-left text-[11px] font-bold tracking-wide text-gray-500 uppercase">
                   <tr>
-                    <th className="p-3">Course</th><th className="p-3">From home</th><th className="p-3">Offer</th><th className="p-3">Intl fees</th><th className="p-3"></th>
+                    <th className="p-3">Course</th><th className="p-3">From college</th><th className="p-3">Offer</th><th className="p-3"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -72,7 +72,6 @@ export default function UniversityShortlist() {
                         {i.inst?.miles != null ? <><strong>{i.inst.miles} mi</strong><br />{i.inst.travel}</> : '—'}
                       </td>
                       <td className="p-3"><div className="flex flex-col items-start gap-1"><OfferPill course={i.course} /><ReachPill reach={i.reach} /></div></td>
-                      <td className="p-3 text-xs text-gray-600">{i.inst?.Fees?.slice(0, 40) || '—'}</td>
                       <td className="p-3">
                         <div className="flex flex-col gap-1.5">
                           <button onClick={() => openDay(i)} className="flex items-center gap-1 text-xs font-bold text-gray-600 hover:text-purple-700"><CalendarPlus size={13} /> Open day</button>

@@ -1,21 +1,17 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { GraduationCap, House, Search, Sparkles, X, Plus, ArrowRight } from 'lucide-react'
+import { GraduationCap, School, Search, Sparkles, X, Plus, ArrowRight } from 'lucide-react'
 import { Card, Button, ImagePlaceholder } from '../components/ui'
 import { ShortlistLink } from '../components/UniBits'
 import { allSubjects, titleCase } from '../data/heap'
 import {
-  loadPrefs, savePrefs, findCourses, gradesToPoints, KNOWN, HOME, loadShortlist,
+  loadPrefs, savePrefs, findCourses, gradesToPoints, KNOWN, COLLEGE, loadShortlist,
 } from '../data/universities'
 
 const WHERE = [
-  { v: 'home', label: 'Stay at home', hint: 'Within about 20 miles' },
-  { v: 'nearby', label: 'Nearby', hint: 'Up to a couple of hours' },
+  { v: 'home', label: 'Close to college', hint: 'Within about 20 miles — you could live at home' },
+  { v: 'nearby', label: 'Nearby', hint: 'Up to a couple of hours away' },
   { v: 'anywhere', label: 'Anywhere in the UK', hint: 'Distance is no object' },
-]
-const SETTING = [
-  { v: 'city', label: 'Big city' }, { v: 'campus', label: 'Campus' },
-  { v: 'town', label: 'Town' }, { v: 'coastal', label: 'By the sea' }, { v: 'any', label: 'No preference' },
 ]
 const COST = [
   { v: 'low', label: 'Keep it as low as I can' },
@@ -120,44 +116,28 @@ export default function Universities() {
         <Card className="space-y-6">
           <div>
             <h2 className="text-xl font-light text-gray-600">Your investigation</h2>
-            <p className="text-sm text-gray-500">Six quick questions. Change your mind any time — the matches update as you go.</p>
+            <p className="text-sm text-gray-500">Five quick questions. Change your mind any time — the matches update as you go.</p>
           </div>
 
           <Q n={1} title="Where do you want to be?">
             <Options items={WHERE} value={prefs.where} onChange={(v) => set({ where: v })} />
             <p className="mt-1.5 flex items-center gap-1 text-xs text-gray-400">
-              <House size={12} /> Measured from home: {HOME.label}
+              <School size={12} /> Measured from {COLLEGE.label} — the closest thing we have to home
             </p>
           </Q>
 
-          <Q n={2} title="What kind of place?">
-            <div className="flex flex-wrap gap-2">
-              {SETTING.map((o) => (
-                <button
-                  key={o.v}
-                  onClick={() => set({ setting: o.v })}
-                  className={`rounded-full border-2 px-3 py-1.5 text-xs font-bold transition-colors ${
-                    prefs.setting === o.v ? 'border-purple-500 bg-purple-500 text-white' : 'border-gray-300 text-gray-600 hover:border-purple-300'
-                  }`}
-                >
-                  {o.label}
-                </button>
-              ))}
-            </div>
-          </Q>
-
-          <Q n={3} title="How much does cost matter?">
+          <Q n={2} title="How much does cost matter?">
             <Options items={COST} value={prefs.cost} onChange={(v) => set({ cost: v })} />
             <p className="mt-1.5 text-xs text-gray-400">
               Home tuition fees are the same everywhere (£9,535), so this will start to matter once we can compare living costs — HEAP doesn't hold those yet.
             </p>
           </Q>
 
-          <Q n={4} title="What shape of course?">
+          <Q n={3} title="What shape of course?">
             <Options items={SHAPE} value={prefs.shape} onChange={(v) => set({ shape: v })} />
           </Q>
 
-          <Q n={5} title="Your predicted grades (optional)">
+          <Q n={4} title="Your predicted grades (optional)">
             <div className="flex flex-wrap items-center gap-3">
               <input
                 value={prefs.grades}
@@ -173,7 +153,7 @@ export default function Universities() {
             </div>
           </Q>
 
-          <Q n={6} title="Subjects you're interested in">
+          <Q n={5} title="Subjects you're interested in">
             <div className="flex flex-wrap gap-2">
               {prefs.subjects.map((s) => (
                 <span key={s} className="flex items-center gap-1.5 rounded-full bg-purple-500 px-3 py-1.5 text-xs font-bold text-white">

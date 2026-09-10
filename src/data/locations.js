@@ -5,7 +5,10 @@
    setting feel real on screen. Unmatched institutions get no location and
    are simply excluded from distance-based filtering. */
 
-export const HOME = { label: 'Sittingbourne, Kent', lat: 51.34, lng: 0.73 }
+/* Navigate doesn't hold a home address, but it knows the student's college —
+   and FE students overwhelmingly live within commuting distance of it, so
+   the college is the stand-in for home throughout. */
+export const COLLEGE = { label: 'your college in Sittingbourne, Kent', lat: 51.34, lng: 0.73 }
 
 /* place → lat, lng, region, setting (city | campus | town | coastal) */
 const PLACES = {
@@ -145,7 +148,7 @@ export function distanceMiles(a, b) {
 /* Rough door-to-door feel for a 17-year-old without a car. */
 export function travelLabel(miles) {
   if (miles == null) return 'Location unknown'
-  if (miles <= 20) return 'Commutable — stay at home'
+  if (miles <= 20) return 'Close to college — you could commute'
   if (miles <= 50) return 'About an hour away'
   if (miles <= 120) return 'A couple of hours by train'
   return 'A proper move'

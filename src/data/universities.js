@@ -2,7 +2,7 @@
    wants to live and study, tags entry offers against their predicted grades,
    and keeps the shortlist, plan and application intents in local storage. */
 import { allUniversities, allCourses, coursesForSubject, subjectByName, titleCase } from './heap'
-import { HOME, locateInstitution, distanceMiles, travelLabel } from './locations'
+import { COLLEGE, locateInstitution, distanceMiles, travelLabel } from './locations'
 
 /* ---------- entry offers vs predicted grades ---------- */
 
@@ -61,7 +61,7 @@ export function institution(name) {
   if (!u) return null
   if (!locCache.has(name)) locCache.set(name, locateInstitution(name))
   const location = locCache.get(name)
-  const miles = location ? distanceMiles(HOME, location) : null
+  const miles = location ? distanceMiles(COLLEGE, location) : null
   return { ...u, location, miles, travel: travelLabel(miles), courses: coursesAt(name) }
 }
 
@@ -69,16 +69,10 @@ export function coursesAt(name) {
   return allCourses.filter((c) => c.University === name)
 }
 
-export function parseFees(text) {
-  const m = (text || '').replace(/,/g, '').match(/£\s?(\d{4,5})/)
-  return m ? Number(m[1]) : null
-}
-
 /* ---------- preferences ---------- */
 
 export const DEFAULT_PREFS = {
   where: 'nearby',        // home | nearby | anywhere
-  setting: 'any',         // city | campus | town | coastal | any
   cost: 'balance',        // low | balance | not-deciding
   shape: 'any',           // three | placement | any
   grades: '',             // e.g. "BBC" — optional
@@ -121,12 +115,9 @@ export function findCourses(prefs) {
 
       reasons.push(`${titleCase(subj)} — one of your subjects`)
       if (miles != null) {
-        if (miles <= 20) { score += 30; reasons.push('You could live at home') }
-        else if (miles <= 50) { score += 22; reasons.push('About an hour from home') }
+        if (miles <= 20) { score += 30; reasons.push('Close enough to commute from home') }
+        else if (miles <= 50) { score += 22; reasons.push('About an hour from college') }
         else if (miles <= 120) { score += 10 }
-      }
-      if (prefs.setting !== 'any' && inst?.location?.setting === prefs.setting) {
-        score += 15; reasons.push(`${titleCase(prefs.setting)} setting, like you asked for`)
       }
       const len = c.LengthOfFullTimeCourse || ''
       if (prefs.shape === 'three' && /^3/.test(len)) { score += 8; reasons.push('Three-year course') }
@@ -190,4 +181,4 @@ export function courseByKey(key) {
   return allCourses.find((c) => c.University === u && c.CourseName === n) || null
 }
 
-export { HOME, travelLabel, subjectByName }
+export { COLLEGE, travelLabel, subjectByName }

@@ -9,8 +9,7 @@ import {
   loadShortlist, saveShortlist, loadPlan, savePlan, loadApplications, saveApplications,
 } from '../data/universities'
 
-const WHERE = [['home', 'Stay at home'], ['nearby', 'Nearby'], ['anywhere', 'Anywhere']]
-const SETTING = [['any', 'Any'], ['city', 'City'], ['campus', 'Campus'], ['town', 'Town'], ['coastal', 'Coast']]
+const WHERE = [['home', 'Close to college'], ['nearby', 'Nearby'], ['anywhere', 'Anywhere']]
 const SHAPE = [['any', 'Any'], ['three', '3 years'], ['placement', 'Placement year']]
 
 function Seg({ items, value, onChange }) {
@@ -96,10 +95,6 @@ export default function UniversityResults() {
             <Seg items={WHERE} value={prefs.where} onChange={(v) => set({ where: v })} />
           </div>
           <div>
-            <p className="mb-1 text-[11px] font-bold tracking-wide text-gray-400 uppercase">Setting</p>
-            <Seg items={SETTING} value={prefs.setting} onChange={(v) => set({ setting: v })} />
-          </div>
-          <div>
             <p className="mb-1 text-[11px] font-bold tracking-wide text-gray-400 uppercase">Course shape</p>
             <Seg items={SHAPE} value={prefs.shape} onChange={(v) => set({ shape: v })} />
           </div>
@@ -158,9 +153,6 @@ export default function UniversityResults() {
                     <Sparkles size={11} className="text-purple-400" /> {r}
                   </li>
                 ))}
-                {c.inst?.Fees && (
-                  <li className="text-xs text-gray-400">International fees: {c.inst.Fees.slice(0, 60)}</li>
-                )}
               </ul>
 
               <CourseActions
