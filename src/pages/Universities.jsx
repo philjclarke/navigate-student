@@ -92,7 +92,7 @@ export default function Universities() {
             </h1>
             <p className="mt-3 max-w-xl text-sm text-gray-600">
               Most course finders start with the subject. We'll start with you — where you'd
-              rather be, what you can afford, what kind of place suits you — and then find the
+              rather be, what you can afford, how long you want to study — and then find the
               courses that fit. Real courses, real entry requirements, from every UK university.
             </p>
             <form
