@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { Bookmark, CalendarPlus, Send, MapPin, Check } from 'lucide-react'
+import { Bookmark, CalendarPlus, Send, MapPin, Check, ExternalLink } from 'lucide-react'
 import { REACH_LABEL, offerPoints } from '../data/universities'
 
 const REACH_STYLE = {
@@ -83,6 +83,36 @@ export function useToast() {
     </div>
   ) : null
   return [toast, show]
+}
+
+/* One standard line about what a UK student actually pays, with a link to
+   the authoritative source. Used wherever cost appears, because HEAP's fee
+   figures are for international students and must never be mistaken for
+   the student's own number. */
+export const FEE_CAP = { amount: '£9,535', year: '2025/26', url: 'https://www.gov.uk/student-finance' }
+
+export function FeeCapNote({ className = '' }) {
+  return (
+    <p className={`text-xs leading-relaxed text-gray-500 ${className}`}>
+      If you're from England, tuition fees are capped at <strong className="text-gray-700">{FEE_CAP.amount} a year</strong> for {FEE_CAP.year}, wherever in the UK you study. A tuition fee loan covers it, so nothing is paid up front.{' '}
+      <a href={FEE_CAP.url} target="_blank" rel="noreferrer" className="font-semibold text-purple-700 hover:underline">
+        Check the latest figures on GOV.UK <ExternalLink size={11} className="inline" />
+      </a>
+    </p>
+  )
+}
+
+export function InternationalFees({ text }) {
+  if (!text) return null
+  return (
+    <div className="rounded-lg bg-gray-50 p-3">
+      <p className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">Fees for international students</p>
+      <p className="mt-1 text-sm text-gray-700">{text}</p>
+      <p className="mt-1 text-xs text-gray-400">
+        This is what the university charges students from outside the UK. If you're a UK student, the cap above is what applies to you.
+      </p>
+    </div>
+  )
 }
 
 export function ShortlistLink({ count }) {

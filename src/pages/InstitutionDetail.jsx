@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { GraduationCap, ChevronLeft, ExternalLink, CalendarPlus, PoundSterling, Info, Sparkles, BookOpen } from 'lucide-react'
 import { Card, Button } from '../components/ui'
-import { ReachPill, OfferPill, Place, useToast, ShortlistLink } from '../components/UniBits'
+import { ReachPill, OfferPill, Place, useToast, ShortlistLink, FeeCapNote, InternationalFees } from '../components/UniBits'
 import { titleCase, splitList, subjectByName, subjectSlug } from '../data/heap'
 import {
   institution, loadPrefs, gradesToPoints, reachFor, courseKey, offerPoints,
@@ -129,8 +129,8 @@ export default function InstitutionDetail() {
             </Card>
           )}
           <Block icon={PoundSterling} title="What it costs">
-            <p><strong>Home fees:</strong> £9,535 a year — the UK cap, the same at every university.</p>
-            {inst.Fees && <p className="mt-1"><strong>International fees:</strong> {inst.Fees}</p>}
+            <FeeCapNote />
+            <div className="mt-3"><InternationalFees text={inst.Fees} /></div>
           </Block>
         </div>
 

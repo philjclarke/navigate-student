@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { GraduationCap, School, Search, Sparkles, X, Plus, ArrowRight } from 'lucide-react'
 import { Card, Button, ImagePlaceholder } from '../components/ui'
-import { ShortlistLink } from '../components/UniBits'
+import { ShortlistLink, FeeCapNote } from '../components/UniBits'
 import { allSubjects, titleCase } from '../data/heap'
 import {
   loadPrefs, savePrefs, findCourses, gradesToPoints, KNOWN, COLLEGE, loadShortlist,
@@ -128,8 +128,9 @@ export default function Universities() {
 
           <Q n={2} title="How much does cost matter?">
             <Options items={COST} value={prefs.cost} onChange={(v) => set({ cost: v })} />
-            <p className="mt-1.5 text-xs text-gray-400">
-              Home tuition fees are the same everywhere (£9,535), so this will start to matter once we can compare living costs — HEAP doesn't hold those yet.
+            <FeeCapNote className="mt-2" />
+            <p className="mt-1 text-xs text-gray-400">
+              Because the cap is the same everywhere, cost really comes down to living costs and whether you stay at home. We'll use your answer once we can compare those.
             </p>
           </Q>
 
