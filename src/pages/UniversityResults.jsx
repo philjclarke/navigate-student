@@ -89,7 +89,7 @@ export default function UniversityResults() {
 
       <div className="grid gap-5 lg:grid-cols-[250px_1fr]">
         {/* Filters mirror the investigation so the student can keep adjusting */}
-        <aside className="space-y-4 self-start rounded-2xl bg-white p-4 shadow-sm">
+        <aside className="space-y-4 self-start rounded-2xl bg-white p-4 shadow-sm lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
           <p className="flex items-center gap-1.5 text-sm font-bold text-gray-700"><SlidersHorizontal size={14} /> Refine</p>
           <div>
             <p className="mb-1 text-[11px] font-bold tracking-wide text-gray-400 uppercase">Where</p>
