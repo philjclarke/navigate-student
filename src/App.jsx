@@ -15,6 +15,7 @@ import Universities from './pages/Universities'
 import UniversityResults from './pages/UniversityResults'
 import InstitutionDetail from './pages/InstitutionDetail'
 import UniversityShortlist from './pages/UniversityShortlist'
+import UniversityApplications from './pages/UniversityApplications'
 import Profile from './pages/Profile'
 import DigitalCv from './pages/DigitalCv'
 
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/universities" element={<Universities />} />
         <Route path="/universities/matches" element={<UniversityResults />} />
         <Route path="/universities/shortlist" element={<UniversityShortlist />} />
+        <Route path="/universities/applications" element={<UniversityApplications />} />
         <Route path="/universities/institution/:name" element={<InstitutionDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/digital-cv" element={<DigitalCv />} />

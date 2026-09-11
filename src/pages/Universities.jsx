@@ -2,10 +2,11 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { GraduationCap, School, Search, Sparkles, X, Plus, ArrowRight } from 'lucide-react'
 import { Card, Button, ImagePlaceholder } from '../components/ui'
-import { ShortlistLink, FeeCapNote } from '../components/UniBits'
+import { FeeCapNote } from '../components/UniBits'
+import UniSubNav from '../components/UniSubNav'
 import { allSubjects, titleCase } from '../data/heap'
 import {
-  loadPrefs, savePrefs, findCourses, gradesToPoints, KNOWN, COLLEGE, loadShortlist,
+  loadPrefs, savePrefs, findCourses, gradesToPoints, KNOWN, COLLEGE,
 } from '../data/universities'
 
 const WHERE = [
@@ -60,7 +61,6 @@ export default function Universities() {
   const [prefs, setPrefs] = useState(loadPrefs)
   const [subjectQuery, setSubjectQuery] = useState('')
   const [search, setSearch] = useState('')
-  const shortlist = loadShortlist()
 
   const set = (patch) => {
     const next = { ...prefs, ...patch }
@@ -78,15 +78,13 @@ export default function Universities() {
 
   return (
     <div className="space-y-6">
+      <UniSubNav />
       <div className="rounded-2xl bg-purple-50 p-7">
         <div className="grid items-center gap-6 lg:grid-cols-[3fr_2fr]">
           <div>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <p className="flex items-center gap-1.5 text-sm font-bold text-purple-700">
-                <GraduationCap size={16} /> Universities
-              </p>
-              <ShortlistLink count={shortlist.length} />
-            </div>
+            <p className="flex items-center gap-1.5 text-sm font-bold text-purple-700">
+              <GraduationCap size={16} /> Universities
+            </p>
             <h1 className="mt-2 text-3xl font-light text-gray-600 md:text-4xl">
               Find a university that fits how you want to live
             </h1>

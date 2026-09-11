@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { GraduationCap, ChevronLeft, ExternalLink, CalendarPlus, PoundSterling, Info, Sparkles, BookOpen } from 'lucide-react'
 import { Card, Button } from '../components/ui'
-import { ReachPill, OfferPill, Place, useToast, ShortlistLink, FeeCapNote, InternationalFees } from '../components/UniBits'
+import { ReachPill, OfferPill, Place, useToast, FeeCapNote, InternationalFees } from '../components/UniBits'
+import UniSubNav from '../components/UniSubNav'
 import { titleCase, splitList, subjectByName, subjectSlug } from '../data/heap'
 import {
   institution, loadPrefs, gradesToPoints, reachFor, courseKey, offerPoints,
@@ -76,6 +77,7 @@ export default function InstitutionDetail() {
   return (
     <div className="space-y-6">
       {toast}
+      <UniSubNav />
       <div className="rounded-2xl bg-purple-50 p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -94,7 +96,6 @@ export default function InstitutionDetail() {
               <ExternalLink size={13} /> {inst.WebAddress}
             </a>
           )}
-          <ShortlistLink count={shortlist.length} />
         </div>
       </div>
 

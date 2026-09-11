@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { GraduationCap, ChevronLeft, SlidersHorizontal, Sparkles, X } from 'lucide-react'
 import { Card, Button } from '../components/ui'
-import { ReachPill, OfferPill, Place, CourseActions, useToast, ShortlistLink } from '../components/UniBits'
+import { ReachPill, OfferPill, Place, CourseActions, useToast } from '../components/UniBits'
+import UniSubNav from '../components/UniSubNav'
 import { titleCase } from '../data/heap'
 import {
   loadPrefs, savePrefs, findCourses, gradesToPoints,
@@ -68,6 +69,7 @@ export default function UniversityResults() {
   return (
     <div className="space-y-5">
       {toast}
+      <UniSubNav />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="flex items-center gap-1.5 text-sm font-bold text-purple-700">
@@ -79,7 +81,6 @@ export default function UniversityResults() {
           </h1>
         </div>
         <div className="flex items-center gap-4">
-          <ShortlistLink count={shortlist.length} />
           <Link to="/universities">
             <Button variant="secondary"><span className="flex items-center gap-1"><ChevronLeft size={15} /> Change my answers</span></Button>
           </Link>

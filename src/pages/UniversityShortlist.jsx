@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { GraduationCap, Trash2, CalendarPlus, Send, Check, Circle, ArrowRight, Clock, ShieldCheck } from 'lucide-react'
 import { Card, Button } from '../components/ui'
+import UniSubNav from '../components/UniSubNav'
 import { ReachPill, OfferPill, useToast } from '../components/UniBits'
 import {
   loadPrefs, gradesToPoints, reachFor, courseByKey, institution,
@@ -39,6 +40,7 @@ export default function UniversityShortlist() {
   return (
     <div className="space-y-6">
       {toast}
+      <UniSubNav />
       <div className="rounded-2xl bg-purple-50 p-7">
         <p className="flex items-center gap-1.5 text-sm font-bold text-purple-700"><GraduationCap size={16} /> Universities</p>
         <h1 className="mt-2 text-3xl font-light text-gray-600 md:text-4xl">My shortlist</h1>
@@ -98,15 +100,12 @@ export default function UniversityShortlist() {
           )}
 
           {applications.length > 0 && (
-            <Card>
-              <p className="flex items-center gap-1.5 text-sm font-bold text-gray-700"><ShieldCheck size={14} className="text-purple-500" /> Applications recorded</p>
-              <p className="text-xs text-gray-500">Held in Navigate for your record. Your college will pass these on to UCAS or the university.</p>
-              <ul className="mt-2 space-y-1">
-                {applications.map((a) => (
-                  <li key={a.key} className="text-sm text-gray-600">{a.course} — {a.university} <span className="text-xs text-gray-400">· {new Date(a.at).toLocaleDateString('en-GB')}</span></li>
-                ))}
-              </ul>
-            </Card>
+            <Link to="/universities/applications" className="flex items-center justify-between rounded-2xl border border-purple-200 bg-white p-4 text-sm hover:border-purple-400">
+              <span className="flex items-center gap-2 font-bold text-gray-700">
+                <ShieldCheck size={15} className="text-purple-500" /> {applications.length} application{applications.length === 1 ? '' : 's'} recorded
+              </span>
+              <span className="flex items-center gap-1 text-xs font-bold text-purple-700">See my applications <ArrowRight size={12} /></span>
+            </Link>
           )}
         </div>
 
