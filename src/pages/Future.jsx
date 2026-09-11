@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Signpost, Compass, Info, ChevronRight, ClipboardList, Sparkles } from 'lucide-react'
+import { Signpost, Compass, Info, ChevronRight, ClipboardList, Sparkles, RotateCcw } from 'lucide-react'
 import { Card, Button } from '../components/ui'
 import DirectionWizard from '../components/DirectionWizard'
 import DestinationGauge from '../components/DestinationGauge'
@@ -11,6 +11,7 @@ import {
   student, signals, surveys, suggestedLean, loadDirection, saveDirection,
   overallConfidence, leastKnownRoute, routeState,
 } from '../data/student'
+import { resetPrototypeData } from '../data/reset'
 
 /* "What we recommend" is the anti-silo mechanism: in each column it can point
    somewhere else entirely, so a student deep in one route still hears about
@@ -207,6 +208,13 @@ export default function Future() {
           <strong className="text-purple-700">{student.destination.pathway}</strong>
           <span className="text-purple-600"> · {student.destination.focus}</span>
         </div>
+        {/* Prototype-only: start the walkthrough again from nothing */}
+        <button
+          onClick={() => { if (window.confirm('Clear every choice you\'ve made in the prototype and start again?')) resetPrototypeData() }}
+          className="ml-auto flex items-center gap-1.5 self-center text-xs text-gray-400 hover:text-red-500"
+        >
+          <RotateCcw size={12} /> Reset my choices
+        </button>
       </div>
 
       <DirectionWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={update} />
