@@ -70,7 +70,7 @@ export default function Future() {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="flex items-center gap-1.5 text-sm font-bold text-brand-600">
-                  <Signpost size={16} /> Navigate Next
+                  <Signpost size={16} /> Future
                 </p>
                 <h1 className="mt-2 text-3xl font-light text-gray-600 md:text-4xl">My Future</h1>
               </div>
