@@ -2,13 +2,19 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   ChevronLeft, Sparkles, PlayCircle, ClipboardCheck, Search, Bot, Bookmark,
-  Building, Hammer, Wrench, GraduationCap, Check, Send, BookOpen, ArrowRight,
+  Building, Hammer, Wrench, GraduationCap, Check, Send, BookOpen, ArrowRight, Handshake,
 } from 'lucide-react'
 import { Card, Button, ImagePlaceholder } from '../components/ui'
 import { sectionByKey, ROUTE_TYPES } from '../data/pathways'
 import { routeState, loadDirection, suggestedLean } from '../data/student'
 import { allSubjects, titleCase, subjectSlug, subjectReach } from '../data/heap'
 import { careers } from '../data/careers'
+import PartnerCard, { PartnerDisclosure, PartnerBadge } from '../components/PartnerCard'
+import { useToast } from '../components/UniBits'
+import {
+  itemsForRoute, itemsForStep, opportunitiesForRoute, CTA_LABEL,
+  loadEngaged, saveEngaged, loadPartnerApplications, savePartnerApplications,
+} from '../data/partners'
 
 const ICON = { apprenticeship: Building, tlevel: Hammer, training: BookOpen, work: Wrench, degree: GraduationCap }
 
@@ -74,6 +80,9 @@ export default function ExploreSection() {
   const { key } = useParams()
   const section = sectionByKey(key)
   const [query, setQuery] = useState('')
+  const [engaged, setEngaged] = useState(loadEngaged)
+  const [applied, setApplied] = useState(loadPartnerApplications)
+  const [toast, show] = useToast()
 
   if (!section) {
     return (
@@ -89,13 +98,45 @@ export default function ExploreSection() {
   const state = routeState[section.type]
   const content = CONTENT[key]
   const lean = loadDirection().lean ?? suggestedLean()
-  const pct = Math.round((state.readiness.done / state.readiness.total) * 100)
+  /* Readiness: the base steps from the student model, plus any further step a
+     partner item has completed. Engaging is what moves the number. */
+  const partnerItems = itemsForRoute(section.type)
+  const stepDone = (i) =>
+    i < state.readiness.done || partnerItems.some((it) => it.develops.step === i && engaged.includes(it.id))
+  const extra = content.prep.reduce((n, _, i) => n + (i >= state.readiness.done && stepDone(i) ? 1 : 0), 0)
+  const done = Math.min(state.readiness.total, state.readiness.done + extra)
+  const pct = Math.round((done / state.readiness.total) * 100)
+  const isApplied = (oppId) => applied.some((a) => a.opportunity === oppId)
+  const engage = (item) => {
+    if (engaged.includes(item.id)) return
+    const next = [...engaged, item.id]; setEngaged(next); saveEngaged(next)
+    show(`Opened in SEREN — "${content.prep[item.develops.step]}" marked complete`)
+  }
+  const apply = (opp) => {
+    if (isApplied(opp.id)) return
+    const next = [...applied, { opportunity: opp.id, title: opp.title, provider: opp.provider, kind: opp.kind, at: new Date().toISOString(), status: 'Waiting for tutor review' }]
+    setApplied(next); savePartnerApplications(next)
+    show('Application created — your tutor will review it first')
+  }
 
   /* Search results differ per section — university searches HEAP subjects,
      jobs searches the careers bank. */
+  /* Partner opportunities are the supply for apprenticeships, T-Levels,
+     training and jobs — previously these searches had nothing real to return. */
+  const q = query.toLowerCase()
+  const oppRows = opportunitiesForRoute(section.type)
+    .filter((o) => `${o.title} ${o.provider}`.toLowerCase().includes(q))
+    .map((o) => ({
+      id: o.id, opp: o, title: o.title,
+      meta: `${o.provider} · ${o.location.city}, ${o.miles} mi${o.salary ? ` · ${o.salary}` : ''} · closes ${o.closes}`,
+    }))
+  const careerRows = careers
+    .filter((c) => c.title.toLowerCase().includes(q))
+    .slice(0, 6)
+    .map((c) => ({ title: c.title, meta: c.stats.salary, to: `/future/career/${c.slug}` }))
   const results = key === 'university'
     ? allSubjects
-        .filter((s) => s.Subject.toLowerCase().includes(query.toLowerCase()))
+        .filter((s) => s.Subject.toLowerCase().includes(q))
         .slice(0, 6)
         .map((s) => {
           const reach = subjectReach(s.Subject)
@@ -105,13 +146,11 @@ export default function ExploreSection() {
             to: `/future/subject/${subjectSlug(s.Subject)}`,
           }
         })
-    : careers
-        .filter((c) => c.title.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 6)
-        .map((c) => ({ title: c.title, meta: c.stats.salary, to: `/future/career/${c.slug}` }))
+    : key === 'jobs' ? [...oppRows, ...careerRows] : oppRows
 
   return (
     <div className="space-y-6">
+      {toast}
       {/* Banner */}
       <div className={`rounded-2xl p-7 ${style.banner}`}>
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -158,21 +197,66 @@ export default function ExploreSection() {
               <p className="text-xs text-gray-500">Each one adds an activity to your timeline</p>
             </div>
             <div className="mt-3 space-y-2">
-              {content.prep.map((p, i) => (
-                <div key={p} className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3">
-                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
-                    i < state.readiness.done ? style.bar : 'bg-gray-300'
-                  }`}>
-                    {i < state.readiness.done ? <Check size={14} /> : i + 1}
-                  </span>
-                  <p className="flex-1 text-sm font-semibold text-gray-700">{p}</p>
-                  <Button small variant={i < state.readiness.done ? 'secondary' : 'primary'}>
-                    {i < state.readiness.done ? 'Done' : 'Start'}
-                  </Button>
-                </div>
-              ))}
+              {content.prep.map((p, i) => {
+                const isDone = stepDone(i)
+                const fillers = itemsForStep(section.type, i)
+                return (
+                  <div key={p} className="rounded-xl border border-gray-200 bg-white p-3">
+                    <div className="flex items-center gap-3">
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${isDone ? style.bar : 'bg-gray-300'}`}>
+                        {isDone ? <Check size={14} /> : i + 1}
+                      </span>
+                      <p className="flex-1 text-sm font-semibold text-gray-700">{p}</p>
+                      <Button small variant={isDone ? 'secondary' : 'primary'}>{isDone ? 'Done' : 'Start'}</Button>
+                    </div>
+                    {/* A partner item is one way of completing the step — Navigate's slot, their filling */}
+                    {fillers.length > 0 && (
+                      <div className="mt-2 ml-10 space-y-1">
+                        {fillers.map((it) => (
+                          <button
+                            key={it.id}
+                            onClick={() => engage(it)}
+                            className="flex w-full flex-wrap items-center gap-2 rounded-lg bg-gray-50 px-2.5 py-1.5 text-left text-xs text-gray-600 hover:bg-gray-100"
+                          >
+                            <Handshake size={12} className="shrink-0 text-gray-400" />
+                            <span>Or complete this with <strong>{it.provider}</strong>: {it.title}</span>
+                            <PartnerBadge />
+                            {engaged.includes(it.id) && <Check size={12} className="text-brand-600" />}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </section>
+
+          {/* Partner rail: labelled, separate from what Navigate recommends, closest first */}
+          {partnerItems.length > 0 && (
+            <section>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="flex items-center gap-2 text-xl font-light text-gray-600">
+                  <Handshake size={18} className="text-gray-400" /> From employers and universities near you
+                </h2>
+                <span className="text-xs text-gray-400">Closest first</span>
+              </div>
+              <div className="mt-1"><PartnerDisclosure /></div>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {partnerItems.map((it) => (
+                  <PartnerCard
+                    key={it.id}
+                    item={it}
+                    stepLabel={content.prep[it.develops.step]}
+                    engaged={engaged.includes(it.id)}
+                    applied={isApplied(it.opp.id)}
+                    onEngage={() => engage(it)}
+                    onApply={() => apply(it.opp)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Search — with the agent alongside, not before */}
           <section>
@@ -190,15 +274,25 @@ export default function ExploreSection() {
                 </div>
                 <div className="mt-3 space-y-2">
                   {results.map((r) => (
-                    <div key={r.title} className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3">
+                    <div key={r.id || r.title} className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3">
                       <div className="flex-1">
-                        <Link to={r.to} className="text-sm font-bold text-gray-700 hover:text-brand-600">{r.title}</Link>
+                        {r.to ? (
+                          <Link to={r.to} className="text-sm font-bold text-gray-700 hover:text-brand-600">{r.title}</Link>
+                        ) : (
+                          <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-gray-700">{r.title} <PartnerBadge /></p>
+                        )}
                         <p className="text-xs text-gray-500">{r.meta}</p>
                       </div>
                       <button className="text-gray-400 hover:text-brand-600" aria-label="Bookmark">
                         <Bookmark size={16} />
                       </button>
-                      <Button small variant="secondary">Apply</Button>
+                      {r.opp ? (
+                        <Button small variant={isApplied(r.opp.id) ? 'secondary' : 'primary'} onClick={() => apply(r.opp)}>
+                          {isApplied(r.opp.id) ? 'With your tutor' : CTA_LABEL[r.opp.kind].replace('this ', '')}
+                        </Button>
+                      ) : (
+                        <Button small variant="secondary">View</Button>
+                      )}
                     </div>
                   ))}
                   {results.length === 0 && (
@@ -244,7 +338,7 @@ export default function ExploreSection() {
               Your {meta.short.toLowerCase()} readiness
             </p>
             <p className="mt-1 text-3xl font-light text-gray-700">
-              {state.readiness.done}<span className="text-lg text-gray-400"> of {state.readiness.total}</span>
+              {done}<span className="text-lg text-gray-400"> of {state.readiness.total}</span>
             </p>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
               <div className={`h-full rounded-full ${style.bar}`} style={{ width: `${pct}%` }} />

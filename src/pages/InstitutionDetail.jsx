@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { GraduationCap, ChevronLeft, ExternalLink, CalendarPlus, PoundSterling, Info, Sparkles, BookOpen } from 'lucide-react'
+import { GraduationCap, ChevronLeft, ExternalLink, CalendarPlus, PoundSterling, BookOpen, Handshake } from 'lucide-react'
+import PartnerCard, { PartnerDisclosure } from '../components/PartnerCard'
+import { itemsForProvider, loadEngaged, saveEngaged, loadPartnerApplications, savePartnerApplications } from '../data/partners'
+
+/* The university readiness steps, as listed in Explore University. A partner
+   item from this institution completes one of them. */
+const UNI_STEPS = ['Draft your personal statement', 'Check entry requirements for your subject', 'Visit an open day']
 import { Card, Button } from '../components/ui'
 import { ReachPill, OfferPill, Place, useToast, FeeCapNote, InternationalFees } from '../components/UniBits'
 import UniSubNav from '../components/UniSubNav'
@@ -27,6 +33,8 @@ export default function InstitutionDetail() {
   const points = gradesToPoints(prefs.grades)
   const [shortlist, setShortlist] = useState(loadShortlist)
   const [toast, show] = useToast()
+  const [engaged, setEngaged] = useState(loadEngaged)
+  const [applied, setApplied] = useState(loadPartnerApplications)
 
   if (!inst) {
     return (
@@ -36,6 +44,18 @@ export default function InstitutionDetail() {
     )
   }
 
+  const fromUni = itemsForProvider(inst.University)
+  const engage = (it) => {
+    if (engaged.includes(it.id)) return
+    const n = [...engaged, it.id]; setEngaged(n); saveEngaged(n)
+    show('Opened in SEREN — added to your university readiness')
+  }
+  const applyOpp = (opp) => {
+    if (applied.some((a) => a.opportunity === opp.id)) return
+    const n = [...applied, { opportunity: opp.id, title: opp.title, provider: opp.provider, kind: opp.kind, at: new Date().toISOString(), status: 'Waiting for tutor review' }]
+    setApplied(n); savePartnerApplications(n)
+    show('Booked — your tutor will see this')
+  }
   const mine = inst.courses.filter((c) => splitList(c.RelatedSubjectAreas).some((s) => prefs.subjects.includes(s)))
   /* Derived from the course list, so the page has substance even when HEAP's
      editorial fields for this institution are empty. */
@@ -133,6 +153,29 @@ export default function InstitutionDetail() {
             <FeeCapNote />
             <div className="mt-3"><InternationalFees text={inst.Fees} /></div>
           </Block>
+
+          {/* What HEAP leaves empty, the university can supply itself via Ignite Talent */}
+          {fromUni.length > 0 && (
+            <section>
+              <h2 className="flex items-center gap-2 text-lg font-light text-gray-600">
+                <Handshake size={16} className="text-gray-400" /> From {inst.University}
+              </h2>
+              <div className="mt-1"><PartnerDisclosure /></div>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                {fromUni.map((it) => (
+                  <PartnerCard
+                    key={it.id}
+                    item={it}
+                    stepLabel={UNI_STEPS[it.develops.step]}
+                    engaged={engaged.includes(it.id)}
+                    applied={applied.some((a) => a.opportunity === it.opp.id)}
+                    onEngage={() => engage(it)}
+                    onApply={() => applyOpp(it.opp)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         <aside>
