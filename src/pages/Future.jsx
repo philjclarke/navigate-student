@@ -89,7 +89,7 @@ export default function Future() {
 
             <Card className="mt-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-bold text-gray-700">Your next destination</p>
+                <p className="font-bold text-gray-700">Your next suggested destination</p>
                 <button
                   onClick={() => setShowSignals(!showSignals)}
                   className="flex items-center gap-1.5 text-xs font-semibold text-brand-600 hover:text-brand-700"
