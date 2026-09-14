@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
-import { House, Sparkles, Bookmark, Send } from 'lucide-react'
+import { House, Sparkles, Bookmark, Send, RotateCcw } from 'lucide-react'
 import { loadShortlist, loadApplications } from '../data/universities'
+import { resetPrototypeData } from '../data/reset'
 
 /* Module sub-navigation: the four places a student moves between while
    using the university finder. Counts read live so shortlisting on one page
@@ -14,7 +15,7 @@ const TABS = [
 
 export default function UniSubNav() {
   return (
-    <nav aria-label="Universities" className="flex flex-wrap gap-1 rounded-xl bg-white p-1 shadow-sm">
+    <nav aria-label="Universities" className="flex flex-wrap items-center gap-1 rounded-xl bg-white p-1 shadow-sm">
       {TABS.map(({ to, label, icon: Icon, end, count }) => {
         const n = count ? count() : 0
         return (
@@ -43,6 +44,13 @@ export default function UniSubNav() {
           </NavLink>
         )
       })}
+      {/* Prototype-only: clear every stored choice and start again */}
+      <button
+        onClick={() => { if (window.confirm('Clear every choice you\'ve made in the prototype and start again?')) resetPrototypeData() }}
+        className="ml-auto flex items-center gap-1.5 px-3 py-2 text-xs text-gray-400 hover:text-red-500"
+      >
+        <RotateCcw size={12} /> Reset my choices
+      </button>
     </nav>
   )
 }
