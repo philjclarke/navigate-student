@@ -11,6 +11,7 @@ import {
 } from '../data/universities'
 
 const WHERE = [['home', 'Close to college'], ['nearby', 'Nearby'], ['anywhere', 'Anywhere']]
+const SETTING = [['any', 'Any'], ['city', 'City'], ['campus', 'Campus'], ['town', 'Town'], ['coastal', 'Coast']]
 const SHAPE = [['any', 'Any'], ['three', '3 years'], ['placement', 'Placement year']]
 
 function Seg({ items, value, onChange }) {
@@ -94,6 +95,10 @@ export default function UniversityResults() {
           <div>
             <p className="mb-1 text-[11px] font-bold tracking-wide text-gray-400 uppercase">Where</p>
             <Seg items={WHERE} value={prefs.where} onChange={(v) => set({ where: v })} />
+          </div>
+          <div>
+            <p className="mb-1 text-[11px] font-bold tracking-wide text-gray-400 uppercase">Setting</p>
+            <Seg items={SETTING} value={prefs.setting} onChange={(v) => set({ setting: v })} />
           </div>
           <div>
             <p className="mb-1 text-[11px] font-bold tracking-wide text-gray-400 uppercase">Course shape</p>

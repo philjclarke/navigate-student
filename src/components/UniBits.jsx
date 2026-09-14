@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Bookmark, CalendarPlus, Send, MapPin, Check, ExternalLink } from 'lucide-react'
 import { REACH_LABEL, offerPoints } from '../data/universities'
+import { SETTING_LABEL } from '../data/locations'
 
 const REACH_STYLE = {
   safe: 'bg-brand-100 text-brand-700',
@@ -35,6 +36,7 @@ export function Place({ inst, compact = false }) {
     <span className="flex items-center gap-1 text-xs text-gray-500">
       <MapPin size={12} className="text-gray-400" />
       {inst.location.city}{compact || inst.location.region === inst.location.city ? '' : `, ${inst.location.region}`}
+      {inst.location.setting && <span className="text-gray-400"> · {SETTING_LABEL[inst.location.setting]}</span>}
       {inst.miles != null && <span className="text-gray-400"> · {inst.miles} mi · {inst.travel}</span>}
     </span>
   )

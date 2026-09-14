@@ -10,6 +10,11 @@
    the college is the stand-in for home throughout. */
 export const COLLEGE = { label: 'your college in Sittingbourne, Kent', lat: 51.34, lng: 0.73 }
 
+/* Setting (city | campus | town | coastal) is not in HEAP. Navigate will
+   maintain it as their own attribute per institution; the values here are
+   a first pass to be reviewed. */
+export const SETTING_LABEL = { city: 'Big city', campus: 'Campus', town: 'Town', coastal: 'By the sea' }
+
 /* place → lat, lng, region, setting (city | campus | town | coastal) */
 const PLACES = {
   london: [51.5074, -0.1278, 'London', 'city'],

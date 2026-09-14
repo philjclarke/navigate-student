@@ -2,7 +2,7 @@
    wants to live and study, tags entry offers against their predicted grades,
    and keeps the shortlist, plan and application intents in local storage. */
 import { allUniversities, allCourses, coursesForSubject, subjectByName, titleCase } from './heap'
-import { COLLEGE, locateInstitution, distanceMiles, travelLabel } from './locations'
+import { COLLEGE, locateInstitution, distanceMiles, travelLabel, SETTING_LABEL } from './locations'
 
 /* ---------- entry offers vs predicted grades ---------- */
 
@@ -73,6 +73,7 @@ export function coursesAt(name) {
 
 export const DEFAULT_PREFS = {
   where: 'nearby',        // home | nearby | anywhere
+  setting: 'any',         // city | campus | town | coastal | any
   cost: 'balance',        // low | balance | not-deciding
   shape: 'any',           // three | placement | any
   grades: '',             // e.g. "BBC" — optional
@@ -118,6 +119,11 @@ export function findCourses(prefs) {
         if (miles <= 20) { score += 30; reasons.push('Close enough to commute from home') }
         else if (miles <= 50) { score += 22; reasons.push('About an hour from college') }
         else if (miles <= 120) { score += 10 }
+      }
+      /* A preference, not a filter: a coastal campus two hours away shouldn't
+         outrank a good local course, but it should climb the list. */
+      if (prefs.setting !== 'any' && inst?.location?.setting === prefs.setting) {
+        score += 15; reasons.push(`${SETTING_LABEL[prefs.setting]} setting, like you asked for`)
       }
       const len = c.LengthOfFullTimeCourse || ''
       if (prefs.shape === 'three' && /^3/.test(len)) { score += 8; reasons.push('Three-year course') }

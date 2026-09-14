@@ -14,6 +14,10 @@ const WHERE = [
   { v: 'nearby', label: 'Nearby', hint: 'Up to a couple of hours away' },
   { v: 'anywhere', label: 'Anywhere in the UK', hint: 'Distance is no object' },
 ]
+const SETTING = [
+  { v: 'city', label: 'Big city' }, { v: 'campus', label: 'Campus' },
+  { v: 'town', label: 'Town' }, { v: 'coastal', label: 'By the sea' }, { v: 'any', label: 'No preference' },
+]
 const COST = [
   { v: 'low', label: 'Keep it as low as I can' },
   { v: 'balance', label: 'A factor, not the deciding one' },
@@ -90,7 +94,7 @@ export default function Universities() {
             </h1>
             <p className="mt-3 max-w-xl text-sm text-gray-600">
               Most course finders start with the subject. We'll start with you — where you'd
-              rather be, what you can afford, how long you want to study — and then find the
+              rather be, what kind of place suits you, what you can afford — and then find the
               courses that fit. Real courses, real entry requirements, from every UK university.
             </p>
             <form
@@ -114,7 +118,7 @@ export default function Universities() {
         <Card className="space-y-6">
           <div>
             <h2 className="text-xl font-light text-gray-600">Your investigation</h2>
-            <p className="text-sm text-gray-500">Five quick questions. Change your mind any time — the matches update as you go.</p>
+            <p className="text-sm text-gray-500">Six quick questions. Change your mind any time — the matches update as you go.</p>
           </div>
 
           <Q n={1} title="Where do you want to be?">
@@ -124,7 +128,24 @@ export default function Universities() {
             </p>
           </Q>
 
-          <Q n={2} title="How much does cost matter?">
+          <Q n={2} title="What kind of place?">
+            <div className="flex flex-wrap gap-2">
+              {SETTING.map((o) => (
+                <button
+                  key={o.v}
+                  onClick={() => set({ setting: o.v })}
+                  className={`rounded-full border-2 px-3 py-1.5 text-xs font-bold transition-colors ${
+                    prefs.setting === o.v ? 'border-purple-500 bg-purple-500 text-white' : 'border-gray-300 text-gray-600 hover:border-purple-300'
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            <p className="mt-1.5 text-xs text-gray-400">A preference, not a rule. Matching places climb the list, nothing is hidden.</p>
+          </Q>
+
+          <Q n={3} title="How much does cost matter?">
             <Options items={COST} value={prefs.cost} onChange={(v) => set({ cost: v })} />
             <FeeCapNote className="mt-2" />
             <p className="mt-1 text-xs text-gray-400">
@@ -132,11 +153,11 @@ export default function Universities() {
             </p>
           </Q>
 
-          <Q n={3} title="What shape of course?">
+          <Q n={4} title="What shape of course?">
             <Options items={SHAPE} value={prefs.shape} onChange={(v) => set({ shape: v })} />
           </Q>
 
-          <Q n={4} title="Your predicted grades (optional)">
+          <Q n={5} title="Your predicted grades (optional)">
             <div className="flex flex-wrap items-center gap-3">
               <input
                 value={prefs.grades}
@@ -152,7 +173,7 @@ export default function Universities() {
             </div>
           </Q>
 
-          <Q n={5} title="Subjects you're interested in">
+          <Q n={6} title="Subjects you're interested in">
             <div className="flex flex-wrap gap-2">
               {prefs.subjects.map((s) => (
                 <span key={s} className="flex items-center gap-1.5 rounded-full bg-purple-500 px-3 py-1.5 text-xs font-bold text-white">
