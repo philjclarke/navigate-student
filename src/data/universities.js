@@ -175,10 +175,11 @@ export function readinessSteps({ prefs, shortlist, plan, applications, steps }) 
     { id: 'grades', label: 'Add your predicted grades', done: !!prefs.grades },
     { id: 'shortlist', label: 'Shortlist three courses', done: shortlist.length >= 3 },
     { id: 'requirements', label: 'Check entry requirements against your grades', done: !!prefs.grades && shortlist.length > 0 },
-    { id: 'openday', label: 'Add an open day to your timeline', done: plan.some((p) => /open day/i.test(p.title)) },
+    { id: 'research', label: 'Research a course in depth', done: plan.some((p) => /^research /i.test(p.title)) },
+    { id: 'openday', label: 'Go to an open day', done: plan.some((p) => /open day/i.test(p.title)) },
     { id: 'statement', label: 'Draft your personal statement', done: !!steps.statement },
     { id: 'reference', label: 'Ask a tutor for a reference', done: !!steps.reference },
-    { id: 'apply', label: 'Record an application', done: applications.length > 0 },
+    { id: 'apply', label: 'Tell us which courses you\'re applying for', done: applications.length > 0 },
   ]
 }
 

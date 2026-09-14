@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { Bookmark, CalendarPlus, Send, MapPin, Check, ExternalLink } from 'lucide-react'
+import { Bookmark, Search, Send, MapPin, Check, ExternalLink } from 'lucide-react'
 import { REACH_LABEL, offerPoints } from '../data/universities'
 import { SETTING_LABEL } from '../data/locations'
 
@@ -58,7 +58,7 @@ export function CourseActions({ course, saved, onSave, onPlan, onApply, applied 
         onClick={onPlan}
         className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-bold text-gray-600 hover:border-brand-400"
       >
-        <CalendarPlus size={13} /> Add to my timeline
+        <Search size={13} /> Research this course
       </button>
       <button
         onClick={onApply}
@@ -67,7 +67,7 @@ export function CourseActions({ course, saved, onSave, onPlan, onApply, applied 
           applied ? 'bg-gray-100 text-gray-400' : 'bg-purple-600 text-white hover:bg-purple-700'
         }`}
       >
-        {applied ? <><Check size={13} /> Application recorded</> : <><Send size={13} /> Record an application</>}
+        {applied ? <><Check size={13} /> I'm applying</> : <><Send size={13} /> I'm applying</>}
       </button>
     </div>
   )

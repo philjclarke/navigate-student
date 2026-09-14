@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { GraduationCap, Trash2, CalendarPlus, Send, Check, Circle, ArrowRight, Clock, ShieldCheck } from 'lucide-react'
+import { GraduationCap, Trash2, Search, Send, Check, Circle, ArrowRight, Clock, ShieldCheck } from 'lucide-react'
 import { Card, Button } from '../components/ui'
 import UniSubNav from '../components/UniSubNav'
 import { ReachPill, OfferPill, useToast } from '../components/UniBits'
+import { ResearchModal, ApplyModal } from '../components/CourseModals'
 import {
   loadPrefs, gradesToPoints, reachFor, courseByKey, institution,
   loadShortlist, saveShortlist, loadPlan, savePlan, loadApplications, saveApplications,
@@ -18,6 +19,8 @@ export default function UniversityShortlist() {
   const [applications, setApplications] = useState(loadApplications)
   const [steps, setSteps] = useState(loadSteps)
   const [toast, show] = useToast()
+  const [researching, setResearching] = useState(null)
+  const [applying, setApplying] = useState(null)
 
   const items = shortlist.map((k) => ({ key: k, course: courseByKey(k) })).filter((i) => i.course)
     .map((i) => ({ ...i, inst: institution(i.course.University), reach: reachFor(points, i.course) }))
@@ -26,20 +29,24 @@ export default function UniversityShortlist() {
   const done = readiness.filter((s) => s.done).length
 
   const remove = (k) => { const n = shortlist.filter((x) => x !== k); setShortlist(n); saveShortlist(n) }
-  const openDay = (i) => {
-    const n = [...plan, { title: `Open day at ${i.course.University}`, date: new Date().toISOString(), key: `openday||${i.course.University}` }]
-    setPlan(n); savePlan(n); show('Open day added to your timeline')
+  const research = (i) => {
+    const n = [...plan, { title: `Research ${i.course.CourseName} at ${i.course.University}`, date: new Date().toISOString(), key: i.key }]
+    setPlan(n); savePlan(n); setResearching(null)
+    show('Added to your timeline — write it up once you\'ve had a look')
   }
   const apply = (i) => {
     if (applications.some((a) => a.key === i.key)) return
     const n = [...applications, { key: i.key, course: i.course.CourseName, university: i.course.University, at: new Date().toISOString() }]
-    setApplications(n); saveApplications(n); show('Application recorded — Navigate will pass this on')
+    setApplications(n); saveApplications(n); setApplying(null)
+    show('Noted — your tutor will pick this up with you')
   }
   const tick = (id) => { const n = { ...steps, [id]: !steps[id] }; setSteps(n); saveSteps(n) }
 
   return (
     <div className="space-y-6">
       {toast}
+      <ResearchModal open={!!researching} course={researching?.course} onClose={() => setResearching(null)} onConfirm={() => research(researching)} />
+      <ApplyModal open={!!applying} course={applying?.course} onClose={() => setApplying(null)} onConfirm={() => apply(applying)} />
       <UniSubNav />
       <div className="rounded-2xl bg-purple-50 p-7">
         <p className="flex items-center gap-1.5 text-sm font-bold text-purple-700"><GraduationCap size={16} /> Universities</p>
@@ -76,9 +83,9 @@ export default function UniversityShortlist() {
                       <td className="p-3"><div className="flex flex-col items-start gap-1"><OfferPill course={i.course} /><ReachPill reach={i.reach} /></div></td>
                       <td className="p-3">
                         <div className="flex flex-col gap-1.5">
-                          <button onClick={() => openDay(i)} className="flex items-center gap-1 text-xs font-bold text-gray-600 hover:text-purple-700"><CalendarPlus size={13} /> Open day</button>
-                          <button onClick={() => apply(i)} className="flex items-center gap-1 text-xs font-bold text-purple-700 hover:text-purple-800">
-                            {applications.some((a) => a.key === i.key) ? <><Check size={13} /> Recorded</> : <><Send size={13} /> Apply</>}
+                          <button onClick={() => setResearching(i)} className="flex items-center gap-1 text-xs font-bold text-gray-600 hover:text-purple-700"><Search size={13} /> Research</button>
+                          <button onClick={() => setApplying(i)} className="flex items-center gap-1 text-xs font-bold text-purple-700 hover:text-purple-800">
+                            {applications.some((a) => a.key === i.key) ? <><Check size={13} /> I'm applying</> : <><Send size={13} /> I'm applying</>}
                           </button>
                           <button onClick={() => remove(i.key)} className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500"><Trash2 size={13} /> Remove</button>
                         </div>
