@@ -164,7 +164,7 @@ export default function Layout() {
 
       {/* Main content */}
       <main className={`pt-16 ${expanded ? 'md:pl-52' : 'md:pl-16'} transition-all`}>
-        <div className="mx-auto max-w-[1400px] px-4 py-6 md:px-8">
+        <div className="px-4 py-6 md:px-8 xl:px-10">
           <Outlet />
           <footer className="mt-10 border-t border-gray-300 pt-4 pb-8 text-xs text-gray-400">
             © 2014 - 2026 Navigation Learning

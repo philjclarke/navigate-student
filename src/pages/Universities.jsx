@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { GraduationCap, School, Search, Sparkles, X, Plus, ArrowRight } from 'lucide-react'
-import { Card, Button, ImagePlaceholder } from '../components/ui'
+import { Card, Button } from '../components/ui'
+import rocketImg from '../assets/nav-rocket.png'
 import { FeeCapNote } from '../components/UniBits'
 import UniSubNav from '../components/UniSubNav'
 import { allSubjects, titleCase } from '../data/heap'
@@ -110,7 +111,11 @@ export default function Universities() {
               <Button variant="secondary"><Search size={15} /></Button>
             </form>
           </div>
-          <ImagePlaceholder className="hidden h-56 lg:block" />
+          <img
+            src={rocketImg}
+            alt="A student riding a rocket"
+            className="mx-auto hidden max-h-72 w-full max-w-xs object-contain lg:block"
+          />
         </div>
       </div>
 
