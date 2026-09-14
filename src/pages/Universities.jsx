@@ -111,11 +111,16 @@ export default function Universities() {
               <Button variant="secondary"><Search size={15} /></Button>
             </form>
           </div>
-          <img
-            src={rocketImg}
-            alt="A student riding a rocket"
-            className="mx-auto hidden max-h-72 w-full max-w-xs object-contain lg:block"
-          />
+          {/* Roughly 90% larger than before, anchored to the bottom edge of the
+              banner and cropped there, so we see him riding the rocket rather
+              than his shoes. */}
+          <div className="relative -mb-7 hidden h-[23rem] self-end overflow-hidden lg:block">
+            <img
+              src={rocketImg}
+              alt="A student riding a rocket"
+              className="absolute top-0 left-1/2 w-[30rem] max-w-none -translate-x-1/2"
+            />
+          </div>
         </div>
       </div>
 
