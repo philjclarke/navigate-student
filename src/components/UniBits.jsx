@@ -43,7 +43,7 @@ export function Place({ inst, compact = false }) {
 }
 
 /* Three commitments from the Miro board: bookmark, add an activity, apply. */
-export function CourseActions({ course, saved, onSave, onPlan, onApply, applied }) {
+export function CourseActions({ course, saved, planned, onSave, onPlan, onApply, applied }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <button
@@ -56,9 +56,11 @@ export function CourseActions({ course, saved, onSave, onPlan, onApply, applied 
       </button>
       <button
         onClick={onPlan}
-        className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-bold text-gray-600 hover:border-brand-400"
+        className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors ${
+          planned ? 'border-brand-500 bg-brand-500 text-white' : 'border-gray-300 text-gray-600 hover:border-brand-400'
+        }`}
       >
-        <Search size={13} /> Research this course
+        {planned ? <><Check size={13} /> On your timeline</> : <><Search size={13} /> Research this course</>}
       </button>
       {onApply && (
         <button

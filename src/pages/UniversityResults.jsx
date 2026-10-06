@@ -40,6 +40,7 @@ export default function UniversityResults() {
   const [shortlist, setShortlist] = useState(loadShortlist)
   const [limit, setLimit] = useState(24)
   const [researching, setResearching] = useState(null)
+  const [plan, setPlan] = useState(loadPlan)
   const [toast, show] = useToast()
 
   const set = (patch) => { const n = { ...prefs, ...patch }; setPrefs(n); savePrefs(n) }
@@ -57,17 +58,19 @@ export default function UniversityResults() {
     setShortlist(next); saveShortlist(next)
     show(shortlist.includes(c.key) ? 'Removed from your shortlist' : 'Added to your shortlist')
   }
-  const plan = (c) => {
-    const p = loadPlan()
-    savePlan([...p, { title: `Research ${c.CourseName} at ${c.University}`, date: new Date().toISOString(), key: c.key }])
+  const isPlanned = (key) => plan.some((p) => p.key === key)
+  const addResearch = (c) => {
     setResearching(null)
+    if (isPlanned(c.key)) { show('Already on your timeline'); return }
+    const next = [...plan, { title: `Research ${c.CourseName} at ${c.University}`, date: new Date().toISOString(), key: c.key }]
+    setPlan(next); savePlan(next)
     show('Added to your timeline — write it up once you\'ve had a look')
   }
 
   return (
     <div className="space-y-5">
       {toast}
-      <ResearchModal open={!!researching} course={researching} onClose={() => setResearching(null)} onConfirm={() => plan(researching)} />
+      <ResearchModal open={!!researching} course={researching} planned={!!researching && isPlanned(researching.key)} onClose={() => setResearching(null)} onConfirm={() => addResearch(researching)} />
       <UniSubNav />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -163,6 +166,7 @@ export default function UniversityResults() {
               <CourseActions
                 course={c}
                 saved={shortlist.includes(c.key)}
+                planned={isPlanned(c.key)}
                 onSave={() => toggleSave(c)}
                 onPlan={() => setResearching(c)}
               />

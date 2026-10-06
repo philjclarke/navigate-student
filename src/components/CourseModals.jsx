@@ -32,7 +32,7 @@ function Point({ icon: Icon, title, children }) {
 
 /* Researching a course is a real activity, so we say what gets recorded and
    give the student something concrete to actually go and do. */
-export function ResearchModal({ open, onClose, course, onConfirm }) {
+export function ResearchModal({ open, onClose, course, onConfirm, planned }) {
   if (!course) return null
   return (
     <Modal open={open} onClose={onClose}>
@@ -46,7 +46,9 @@ export function ResearchModal({ open, onClose, course, onConfirm }) {
 
       <div className="mt-4 rounded-xl bg-brand-50 p-3">
         <p className="flex items-center gap-2 text-sm font-bold text-gray-700">
-          <CalendarPlus size={15} className="text-brand-600" /> We'll add this to your timeline
+          {planned
+            ? <><Check size={15} className="text-brand-600" /> This is already on your timeline</>
+            : <><CalendarPlus size={15} className="text-brand-600" /> We'll add this to your timeline</>}
         </p>
         <p className="mt-1 text-xs text-gray-600">
           It goes in as an activity you can write up afterwards, like any other. What you find
@@ -79,10 +81,12 @@ export function ResearchModal({ open, onClose, course, onConfirm }) {
       </ul>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        <Button onClick={onConfirm} className="!bg-purple-600 hover:!bg-purple-700">
-          <span className="flex items-center gap-1.5"><CalendarPlus size={15} /> Add to my timeline</span>
-        </Button>
-        <Button variant="secondary" onClick={onClose}>Not now</Button>
+        {!planned && (
+          <Button onClick={onConfirm} className="!bg-purple-600 hover:!bg-purple-700">
+            <span className="flex items-center gap-1.5"><CalendarPlus size={15} /> Add to my timeline</span>
+          </Button>
+        )}
+        <Button variant="secondary" onClick={onClose}>{planned ? 'Close' : 'Not now'}</Button>
       </div>
     </Modal>
   )

@@ -29,9 +29,12 @@ export default function UniversityShortlist() {
   const done = readiness.filter((s) => s.done).length
 
   const remove = (k) => { const n = shortlist.filter((x) => x !== k); setShortlist(n); saveShortlist(n) }
+  const isPlanned = (key) => plan.some((p) => p.key === key)
   const research = (i) => {
+    setResearching(null)
+    if (isPlanned(i.key)) { show('Already on your timeline'); return }
     const n = [...plan, { title: `Research ${i.course.CourseName} at ${i.course.University}`, date: new Date().toISOString(), key: i.key }]
-    setPlan(n); savePlan(n); setResearching(null)
+    setPlan(n); savePlan(n)
     show('Added to your timeline — write it up once you\'ve had a look')
   }
   const apply = (i) => {
@@ -45,7 +48,7 @@ export default function UniversityShortlist() {
   return (
     <div className="space-y-6">
       {toast}
-      <ResearchModal open={!!researching} course={researching?.course} onClose={() => setResearching(null)} onConfirm={() => research(researching)} />
+      <ResearchModal open={!!researching} course={researching?.course} planned={!!researching && isPlanned(researching.key)} onClose={() => setResearching(null)} onConfirm={() => research(researching)} />
       <ApplyModal open={!!applying} course={applying?.course} onClose={() => setApplying(null)} onConfirm={() => apply(applying)} />
       <UniSubNav />
       <div className="rounded-2xl bg-purple-50 p-7">
@@ -85,9 +88,13 @@ export default function UniversityShortlist() {
                         <div className="flex flex-col items-stretch gap-1.5">
                           <button
                             onClick={() => setResearching(i)}
-                            className="flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-bold whitespace-nowrap text-gray-600 hover:border-purple-400 hover:text-purple-700"
+                            className={`flex items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-colors ${
+                              isPlanned(i.key)
+                                ? 'border-brand-500 bg-brand-500 text-white'
+                                : 'border-gray-300 text-gray-600 hover:border-purple-400 hover:text-purple-700'
+                            }`}
                           >
-                            <Search size={13} /> Research
+                            {isPlanned(i.key) ? <><Check size={13} /> On your timeline</> : <><Search size={13} /> Research</>}
                           </button>
                           <button
                             onClick={() => setApplying(i)}
