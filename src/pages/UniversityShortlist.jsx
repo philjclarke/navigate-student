@@ -82,12 +82,25 @@ export default function UniversityShortlist() {
                       </td>
                       <td className="p-3"><div className="flex flex-col items-start gap-1"><OfferPill course={i.course} /><ReachPill reach={i.reach} /></div></td>
                       <td className="p-3">
-                        <div className="flex flex-col gap-1.5">
-                          <button onClick={() => setResearching(i)} className="flex items-center gap-1 text-xs font-bold text-gray-600 hover:text-purple-700"><Search size={13} /> Research</button>
-                          <button onClick={() => setApplying(i)} className="flex items-center gap-1 text-xs font-bold text-purple-700 hover:text-purple-800">
+                        <div className="flex flex-col items-stretch gap-1.5">
+                          <button
+                            onClick={() => setResearching(i)}
+                            className="flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-bold whitespace-nowrap text-gray-600 hover:border-purple-400 hover:text-purple-700"
+                          >
+                            <Search size={13} /> Research
+                          </button>
+                          <button
+                            onClick={() => setApplying(i)}
+                            disabled={applications.some((a) => a.key === i.key)}
+                            className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold whitespace-nowrap ${
+                              applications.some((a) => a.key === i.key)
+                                ? 'bg-gray-100 text-gray-400'
+                                : 'bg-purple-600 text-white hover:bg-purple-700'
+                            }`}
+                          >
                             {applications.some((a) => a.key === i.key) ? <><Check size={13} /> I'm applying</> : <><Send size={13} /> I'm applying</>}
                           </button>
-                          <button onClick={() => remove(i.key)} className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500"><Trash2 size={13} /> Remove</button>
+                          <button onClick={() => remove(i.key)} className="flex items-center justify-center gap-1 text-xs text-gray-400 hover:text-red-500"><Trash2 size={12} /> Remove</button>
                         </div>
                       </td>
                     </tr>

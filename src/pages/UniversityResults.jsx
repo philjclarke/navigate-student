@@ -3,12 +3,12 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { GraduationCap, ChevronLeft, SlidersHorizontal, Sparkles, X } from 'lucide-react'
 import { Card, Button } from '../components/ui'
 import { ReachPill, OfferPill, Place, CourseActions, useToast } from '../components/UniBits'
-import { ResearchModal, ApplyModal } from '../components/CourseModals'
+import { ResearchModal } from '../components/CourseModals'
 import UniSubNav from '../components/UniSubNav'
 import { titleCase } from '../data/heap'
 import {
   loadPrefs, savePrefs, findCourses, gradesToPoints,
-  loadShortlist, saveShortlist, loadPlan, savePlan, loadApplications, saveApplications,
+  loadShortlist, saveShortlist, loadPlan, savePlan,
 } from '../data/universities'
 
 const WHERE = [['home', 'Close to college'], ['nearby', 'Nearby'], ['anywhere', 'Anywhere']]
@@ -38,10 +38,8 @@ export default function UniversityResults() {
   const q = (params.get('q') || '').toLowerCase()
   const [prefs, setPrefs] = useState(loadPrefs)
   const [shortlist, setShortlist] = useState(loadShortlist)
-  const [applications, setApplications] = useState(loadApplications)
   const [limit, setLimit] = useState(24)
   const [researching, setResearching] = useState(null)
-  const [applying, setApplying] = useState(null)
   const [toast, show] = useToast()
 
   const set = (patch) => { const n = { ...prefs, ...patch }; setPrefs(n); savePrefs(n) }
@@ -65,18 +63,11 @@ export default function UniversityResults() {
     setResearching(null)
     show('Added to your timeline — write it up once you\'ve had a look')
   }
-  const apply = (c) => {
-    const next = [...applications, { key: c.key, course: c.CourseName, university: c.University, at: new Date().toISOString() }]
-    setApplications(next); saveApplications(next)
-    setApplying(null)
-    show('Noted — your tutor will pick this up with you')
-  }
 
   return (
     <div className="space-y-5">
       {toast}
       <ResearchModal open={!!researching} course={researching} onClose={() => setResearching(null)} onConfirm={() => plan(researching)} />
-      <ApplyModal open={!!applying} course={applying} onClose={() => setApplying(null)} onConfirm={() => apply(applying)} />
       <UniSubNav />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -168,13 +159,12 @@ export default function UniversityResults() {
                 ))}
               </ul>
 
+              {/* No "I'm applying" here — that decision belongs on the shortlist */}
               <CourseActions
                 course={c}
                 saved={shortlist.includes(c.key)}
-                applied={applications.some((a) => a.key === c.key)}
                 onSave={() => toggleSave(c)}
                 onPlan={() => setResearching(c)}
-                onApply={() => setApplying(c)}
               />
             </Card>
           ))}

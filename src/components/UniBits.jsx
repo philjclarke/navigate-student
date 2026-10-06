@@ -60,15 +60,17 @@ export function CourseActions({ course, saved, onSave, onPlan, onApply, applied 
       >
         <Search size={13} /> Research this course
       </button>
-      <button
-        onClick={onApply}
-        disabled={applied}
-        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold ${
-          applied ? 'bg-gray-100 text-gray-400' : 'bg-purple-600 text-white hover:bg-purple-700'
-        }`}
-      >
-        {applied ? <><Check size={13} /> I'm applying</> : <><Send size={13} /> I'm applying</>}
-      </button>
+      {onApply && (
+        <button
+          onClick={onApply}
+          disabled={applied}
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold ${
+            applied ? 'bg-gray-100 text-gray-400' : 'bg-purple-600 text-white hover:bg-purple-700'
+          }`}
+        >
+          {applied ? <><Check size={13} /> I'm applying</> : <><Send size={13} /> I'm applying</>}
+        </button>
+      )}
     </div>
   )
 }
