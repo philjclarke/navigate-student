@@ -39,16 +39,17 @@ export default function Feed() {
   if (conf === 0) {
     return (
       <div className="pb-10">
-        <div className="relative min-h-[236px] overflow-hidden bg-gradient-to-br from-violet-200 via-violet-100 to-sky-100 px-5 pt-5 pb-6">
+        <div className="relative min-h-[206px] overflow-hidden bg-gradient-to-br from-violet-200 via-violet-100 to-sky-100 px-5 pt-5 pb-6">
           <div className="absolute -top-12 -left-10 h-44 w-44 rounded-full bg-white/50 blur-2xl" />
           <div className="absolute -right-8 -bottom-12 h-44 w-44 rounded-full bg-sky-200/60 blur-2xl" />
-          {/* bleeds off the right edge, so the frame feels too small to hold him */}
+          {/* bleeds off the right edge and past the foot of the banner: the shoes
+              were the least interesting part of him */}
           <img
             src={rocket}
             alt="A student riding a rocket"
-            className="pointer-events-none absolute -right-12 bottom-0 h-[214px] w-auto max-w-none drop-shadow-xl"
+            className="pointer-events-none absolute -right-12 -bottom-[58px] h-[228px] w-auto max-w-none drop-shadow-xl"
           />
-          <div className="relative pr-[136px]">
+          <div className="relative pr-[142px]">
             <span className="inline-block rounded-full bg-white/70 px-3 py-1 text-[11px] font-bold tracking-wide text-violet-700 uppercase">
               Universities
             </span>
