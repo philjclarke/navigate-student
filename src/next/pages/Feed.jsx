@@ -39,23 +39,26 @@ export default function Feed() {
   if (conf === 0) {
     return (
       <div className="pb-10">
-        <div className="relative h-[186px] overflow-hidden bg-gradient-to-br from-violet-200 via-violet-100 to-sky-100">
+        <div className="relative min-h-[236px] overflow-hidden bg-gradient-to-br from-violet-200 via-violet-100 to-sky-100 px-5 pt-5 pb-6">
           <div className="absolute -top-12 -left-10 h-44 w-44 rounded-full bg-white/50 blur-2xl" />
-          <div className="absolute -right-8 -bottom-12 h-40 w-40 rounded-full bg-sky-200/60 blur-2xl" />
-          <span className="absolute top-5 left-5 rounded-full bg-white/70 px-3 py-1 text-[11px] font-bold tracking-wide text-violet-700 uppercase">
-            Universities
-          </span>
+          <div className="absolute -right-8 -bottom-12 h-44 w-44 rounded-full bg-sky-200/60 blur-2xl" />
+          {/* bleeds off the right edge, so the frame feels too small to hold him */}
           <img
             src={rocket}
             alt="A student riding a rocket"
-            className="absolute bottom-0 left-[54%] h-[182px] w-auto max-w-none -translate-x-1/2 drop-shadow-xl"
+            className="pointer-events-none absolute -right-12 bottom-0 h-[214px] w-auto max-w-none drop-shadow-xl"
           />
+          <div className="relative pr-[136px]">
+            <span className="inline-block rounded-full bg-white/70 px-3 py-1 text-[11px] font-bold tracking-wide text-violet-700 uppercase">
+              Universities
+            </span>
+            <h1 className="mt-3 text-[32px] leading-[1.05] font-bold tracking-tight text-slate-900">
+              Supercharge your future
+            </h1>
+          </div>
         </div>
-        <div className="px-5 pt-7">
-        <h1 className="text-[32px] leading-[1.1] font-bold tracking-tight text-slate-900">
-          Let's work out what happens after college.
-        </h1>
-        <p className="mt-4 text-[16px] leading-relaxed text-slate-600">
+        <div className="px-5 pt-6">
+        <p className="text-[16px] leading-relaxed text-slate-600">
           Four quick questions, about two minutes. We'll explain things as we go,
           and you can change your answers whenever you like.
         </p>
