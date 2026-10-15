@@ -37,7 +37,7 @@ export default function Feed() {
   /* Brand new: the whole screen is an invitation, not a dashboard. */
   if (conf === 0) {
     return (
-      <div className="px-5 pt-16 pb-10">
+      <div className="px-5 pt-10 pb-10">
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-600">
           <GraduationCap size={28} className="text-white" />
         </div>
@@ -45,14 +45,14 @@ export default function Feed() {
           Let's work out what happens after college.
         </h1>
         <p className="mt-4 text-[16px] leading-relaxed text-slate-600">
-          Four questions, about two minutes. We will explain things as we go, and
-          nothing you say here locks you into anything.
+          Four quick questions, about two minutes. We'll explain things as we go,
+          and you can change your answers whenever you like.
         </p>
         <div className="mt-6 space-y-3">
           {[
-            ['Everything is a suggestion', 'You can always see why, and you can always change it'],
-            ['Nothing gets hidden', 'Including the courses that would be a stretch'],
-            ['Nobody sees it but you and your tutor', 'And only when you ask them to'],
+            ['See courses that actually fit you', 'Matched on where you would go, what you can afford and what you want to study'],
+            ['Know what to do next', 'One step at a time, at your own pace'],
+            ['Change your mind as often as you like', 'Nothing here is final, and nothing is shared until you want it to be'],
           ].map(([t, s]) => (
             <div key={t} className="flex gap-3">
               <Check size={18} className="mt-0.5 shrink-0 text-emerald-600" strokeWidth={3} />
@@ -77,7 +77,7 @@ export default function Feed() {
     <div className="pb-4">
       <Toast msg={toast} />
 
-      <header className="px-5 pt-8 pb-5">
+      <header className="px-5 pt-6 pb-5">
         <p className="text-[13px] font-semibold text-slate-500">Afternoon, Jason</p>
         <h1 className="mt-0.5 text-[26px] leading-tight font-bold tracking-tight text-slate-900">
           {nextStep ? nextStep.label : 'You are in good shape'}
@@ -96,7 +96,7 @@ export default function Feed() {
             <div className="min-w-0 flex-1">
               <p className="text-[15px] font-bold text-slate-900">{r.done} of {r.total} steps done</p>
               <p className="mt-0.5 text-[13px] leading-snug text-slate-500">
-                Steps you have finished, not a prediction of how you would do.
+                Things you've done so far. There's no score and no pass mark.
               </p>
             </div>
             <Link to="/next/me" className="shrink-0 text-violet-600"><ArrowRight size={20} /></Link>
@@ -108,7 +108,7 @@ export default function Feed() {
           <Card className="border-violet-200 bg-violet-50 !p-4">
             <p className="text-[15px] font-bold text-slate-900">Finish setting up</p>
             <p className="mt-1 text-[13px] text-slate-600">
-              A couple more answers and the matches get much sharper.
+              A couple more answers and we can be a lot more useful.
             </p>
             <Button onClick={() => nav('/next/start')} className="mt-3 !min-h-[44px]">Pick up where you left off</Button>
           </Card>
@@ -196,11 +196,11 @@ export default function Feed() {
                 subjects: 'Pick the subject areas you are drawn to and everything else starts working.',
                 life: 'Tell us how far you would go and how the money feels.',
                 grades: 'Add your predicted grades so we can tag what is within reach.',
-                shortlist: 'Most students apply to five. Save the ones you are curious about.',
-                research: 'Pick one and look properly at the modules, the assessment and the place.',
-                openday: 'Nothing tells you more in an afternoon. Book one before they fill up.',
-                statement: 'One statement covers all five choices. Your tutor will help.',
-                reference: 'Ask early. Tutors write a lot of these in December.',
+                shortlist: "Most people apply to five. Save anything you are curious about.",
+                research: "Pick one and have a proper look at the modules, how it is assessed and the place itself.",
+                openday: 'Nothing tells you more in an afternoon. They do fill up, so worth booking early.',
+                statement: 'One statement covers all five of your choices, and your tutor will help you with it.',
+                reference: 'Worth asking early, as tutors write a lot of these in December.',
               }[nextStep.id]}
             </p>
             <Button
@@ -257,7 +257,7 @@ export default function Feed() {
             </p>
             <p className="mt-1.5 text-[14px] leading-snug text-slate-700">
               Archaeology has a salaried apprenticeship route. Six years instead of five,
-              paid throughout, no tuition fees. Worth a look before you rule it out.
+              paid the whole way, no tuition fees. Might be worth a look.
             </p>
             <Button variant="secondary" className="mt-4 !min-h-[44px]" onClick={() => say('Would open the apprenticeship route')}>
               <Building size={16} /> Compare the routes
@@ -274,8 +274,8 @@ export default function Feed() {
           <div className="mt-2.5"><Bar pct={conf} /></div>
           <p className="mt-2 text-[12px] leading-snug text-slate-500">
             {conf < 50
-              ? 'The more you tell us, the better every suggestion on this screen gets.'
-              : 'Good enough to be useful. Answering the odd question keeps it sharp.'}
+              ? 'The more you tell us, the better this gets at finding things for you.'
+              : 'Enough to be useful. The odd question here and there keeps it sharp.'}
           </p>
         </Card>
 

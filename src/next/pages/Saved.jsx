@@ -19,14 +19,14 @@ export default function Saved() {
       <Toast msg={toast} />
       <Header eyebrow="Saved" title={items.length ? `${items.length} saved` : 'Nothing saved yet'}>
         <p className="mt-2 text-[14px] leading-snug text-slate-500">
-          Most students apply to five. Save anything you are curious about, including the stretches.
+          Most people apply to five. Save anything you're curious about, including the ambitious ones.
         </p>
       </Header>
 
       <div className="space-y-3 px-5">
         {items.length === 0 && (
           <Card className="text-center">
-            <p className="text-[15px] text-slate-600">Your saved courses will show up here.</p>
+            <p className="text-[15px] text-slate-600">Anything you save will show up here.</p>
             <Link to="/next/explore" className="mt-4 block"><Button><Search size={16} /> Find courses</Button></Link>
           </Card>
         )}

@@ -41,7 +41,7 @@ export default function Me() {
             </div>
           </div>
           <p className="mt-3 text-[12px] leading-snug text-slate-500">
-            This counts what you have done. It is not a score, and it says nothing about how you would do.
+            This is what you've done so far. It isn't a score, and it says nothing about how you'd do.
           </p>
           <div className="mt-3 space-y-0.5">
             {r.steps.map((s) => {
@@ -70,7 +70,7 @@ export default function Me() {
           </div>
           <div className="mt-2.5"><Bar pct={conf} /></div>
           <p className="mt-2 text-[12px] leading-snug text-slate-500">
-            Only used to order what you see. It never limits what you can look at.
+            This just helps us put the right things in front of you first.
           </p>
         </Card>
 

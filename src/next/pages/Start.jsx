@@ -9,6 +9,12 @@ import { allSubjects, titleCase } from '../../data/heap'
 /* Onboarding is a conversation, not a form. One question a screen, each one
    preceded by the thing you need to know in order to answer it honestly.
    Skippable throughout: nothing here is a gate. */
+const POPULAR = [
+  'PSYCHOLOGY', 'BUSINESS and MANAGEMENT COURSES', 'COMPUTER SCIENCE AND INFORMATION TECHNOLOGY',
+  'NURSING and MIDWIFERY', 'LAW', 'SPORTS SCIENCES/STUDIES', 'Criminology', 'MEDIA STUDIES',
+  'ENGINEERING (MECHANICAL)', 'ART and DESIGN (GENERAL)',
+]
+
 export default function Start() {
   const nav = useNavigate()
   const [p, setP] = useState(load)
@@ -109,6 +115,22 @@ export default function Start() {
                 className="min-h-[48px] w-full bg-transparent text-[15px] outline-none"
               />
             </div>
+            {q.length < 2 && (
+              <div className="mt-4">
+                <p className="text-xs font-bold tracking-wide text-slate-400 uppercase">Commonly picked</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {POPULAR.filter((s) => !picked.includes(s)).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => set([...picked, s])}
+                      className="min-h-[40px] rounded-full border-2 border-slate-200 px-3.5 text-[13px] font-semibold text-slate-600 active:bg-slate-100"
+                    >
+                      {titleCase(s)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="mt-2 space-y-1">
               {hits.map((s) => (
                 <button
@@ -136,10 +158,10 @@ export default function Start() {
             />
             {gradesToPoints(p.answers.grades) ? (
               <p className="mt-2.5 text-[14px] text-slate-600">
-                That is <strong>{gradesToPoints(p.answers.grades)} UCAS points</strong>. We will tag every offer as within reach or a stretch, and show you both.
+                That is <strong>{gradesToPoints(p.answers.grades)} UCAS points</strong>. We'll tag offers as within reach or a stretch, and show you both.
               </p>
             ) : (
-              <p className="mt-2.5 text-[14px] text-slate-500">Leave it blank if you would rather not say. You can add it later.</p>
+              <p className="mt-2.5 text-[14px] text-slate-500">Leave it blank if you'd rather not say. You can add it later.</p>
             )}
           </div>
         )}
