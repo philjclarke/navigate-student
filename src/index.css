@@ -93,3 +93,14 @@ body {
   box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
   cursor: pointer;
 }
+
+/* The section menu grows out of the hamburger rather than sliding in from the
+   edge, so the panel keeps its origin in view. */
+@keyframes nx-pop {
+  from { opacity: 0; transform: scale(0.92) translate(-6px, -8px); }
+  to   { opacity: 1; transform: none; }
+}
+.nx-pop { animation: nx-pop 0.15s cubic-bezier(0.2, 0, 0.2, 1); transform-origin: top left; }
+@media (prefers-reduced-motion: reduce) {
+  .nx-pop { animation: none; }
+}

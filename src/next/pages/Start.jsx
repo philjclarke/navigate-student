@@ -38,7 +38,7 @@ export default function Start() {
     : []
 
   return (
-    <div className="flex min-h-dvh flex-col sm:min-h-[calc(100dvh-2rem)]">
+    <div className="flex min-h-full flex-col">
       <div className="px-5 pt-6">
         <div className="flex items-center gap-3">
           <button
