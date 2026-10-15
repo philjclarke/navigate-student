@@ -43,8 +43,8 @@ export default function Shell() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-white shadow-xl sm:my-4 sm:min-h-[calc(100vh-2rem)] sm:rounded-[2rem]">
+    <div className="min-h-dvh bg-slate-100">
+      <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] flex-col overflow-hidden bg-white shadow-xl sm:my-4 sm:min-h-[calc(100dvh-2rem)] sm:rounded-[2rem]">
 
         {!onboarding && (
           <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between bg-brand-500 px-2 text-white">
