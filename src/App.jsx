@@ -1,5 +1,11 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
+import NextShell from './next/components/Shell'
+import NextFeed from './next/pages/Feed'
+import NextStart from './next/pages/Start'
+import NextExplore from './next/pages/Explore'
+import NextSaved from './next/pages/Saved'
+import NextMe from './next/pages/Me'
 import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Timeline from './pages/Timeline'
@@ -44,6 +50,13 @@ export default function App() {
         <Route path="/universities/institution/:name" element={<InstitutionDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/digital-cv" element={<DigitalCv />} />
+      </Route>
+      <Route path="/next" element={<NextShell />}>
+        <Route index element={<NextFeed />} />
+        <Route path="start" element={<NextStart />} />
+        <Route path="explore" element={<NextExplore />} />
+        <Route path="shortlist" element={<NextSaved />} />
+        <Route path="me" element={<NextMe />} />
       </Route>
     </Routes>
     </>
