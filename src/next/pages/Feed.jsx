@@ -9,6 +9,7 @@ import {
   load, save, confidence, unanswered, coreComplete, readiness, toPrefs, isAnswered,
 } from '../profile'
 import { findCourses, courseKey } from '../../data/universities'
+import rocket from '../../assets/nav-rocket.png'
 
 /* The feed is composed, not fixed. What appears depends on how much we know:
    little, and it fills with things that teach and ask; more, and it fills with
@@ -37,11 +38,21 @@ export default function Feed() {
   /* Brand new: the whole screen is an invitation, not a dashboard. */
   if (conf === 0) {
     return (
-      <div className="px-5 pt-10 pb-10">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-600">
-          <GraduationCap size={28} className="text-white" />
+      <div className="pb-10">
+        <div className="relative h-[186px] overflow-hidden bg-gradient-to-br from-violet-200 via-violet-100 to-sky-100">
+          <div className="absolute -top-12 -left-10 h-44 w-44 rounded-full bg-white/50 blur-2xl" />
+          <div className="absolute -right-8 -bottom-12 h-40 w-40 rounded-full bg-sky-200/60 blur-2xl" />
+          <span className="absolute top-5 left-5 rounded-full bg-white/70 px-3 py-1 text-[11px] font-bold tracking-wide text-violet-700 uppercase">
+            Universities
+          </span>
+          <img
+            src={rocket}
+            alt="A student riding a rocket"
+            className="absolute bottom-0 left-[54%] h-[182px] w-auto max-w-none -translate-x-1/2 drop-shadow-xl"
+          />
         </div>
-        <h1 className="mt-6 text-[32px] leading-[1.1] font-bold tracking-tight text-slate-900">
+        <div className="px-5 pt-7">
+        <h1 className="text-[32px] leading-[1.1] font-bold tracking-tight text-slate-900">
           Let's work out what happens after college.
         </h1>
         <p className="mt-4 text-[16px] leading-relaxed text-slate-600">
@@ -69,6 +80,7 @@ export default function Feed() {
             Or just have a look around
           </Link>
         </div>
+        </div>
       </div>
     )
   }
@@ -77,11 +89,20 @@ export default function Feed() {
     <div className="pb-4">
       <Toast msg={toast} />
 
-      <header className="px-5 pt-6 pb-5">
-        <p className="text-[13px] font-semibold text-slate-500">Afternoon, Jason</p>
-        <h1 className="mt-0.5 text-[26px] leading-tight font-bold tracking-tight text-slate-900">
-          {nextStep ? nextStep.label : 'You are in good shape'}
-        </h1>
+      <header className="relative mb-4 min-h-[136px] overflow-hidden bg-gradient-to-br from-violet-200 via-violet-100 to-sky-100 px-5 pt-5 pb-6">
+        <div className="absolute -top-10 -left-8 h-36 w-36 rounded-full bg-white/50 blur-2xl" />
+        <img
+          src={rocket}
+          alt=""
+          aria-hidden="true"
+          className="absolute right-0 bottom-0 h-[122px] w-auto max-w-none"
+        />
+        <div className="relative pr-[108px]">
+          <p className="text-[13px] font-semibold text-violet-700">Afternoon, Jason</p>
+          <h1 className="mt-0.5 text-[24px] leading-tight font-bold tracking-tight text-slate-900">
+            {nextStep ? nextStep.label : 'You are in good shape'}
+          </h1>
+        </div>
       </header>
 
       <div className="space-y-3 px-5">
