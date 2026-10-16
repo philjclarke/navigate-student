@@ -6,6 +6,7 @@ import {
   LogOut, Accessibility, MessageCircle, RotateCcw,
 } from 'lucide-react'
 import { load, reset, confidence } from '../profile'
+import logo from '../../assets/nav-logo.svg'
 
 /* The wider Navigate structure is kept: a brand bar carrying the section menu
    and Message my Tutor. Refreshed rather than copied — the menu pops out of the
@@ -71,7 +72,7 @@ export default function Shell() {
                 <X size={24} className={`absolute inset-0 transition-all duration-200 ${menu ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'}`} />
               </span>
             </button>
-            <span className="text-[19px] font-extrabold tracking-wide">NAVIGATE</span>
+            <img src={logo} alt="Navigate" className="h-[22px] w-auto" />
             <button
               onClick={() => say('Opens a message to your tutor')}
               className="flex h-11 w-11 flex-col items-center justify-center gap-0.5"
