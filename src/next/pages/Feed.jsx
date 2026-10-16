@@ -183,9 +183,11 @@ export default function Feed() {
                 const on = p.shortlist.includes(k)
                 return (
                   <div key={k} className="w-[268px] shrink-0 snap-start rounded-3xl border border-slate-200 bg-white p-4">
-                    <div className="mb-3 h-20 rounded-2xl bg-gradient-to-br from-violet-200 via-slate-100 to-sky-200" />
-                    <p className="text-[12px] font-bold text-violet-700">{c.University}</p>
-                    <p className="mt-0.5 line-clamp-2 text-[16px] leading-snug font-bold text-slate-900">{c.CourseName}</p>
+                    <Link to={`/next/course/${encodeURIComponent(k)}`} className="block">
+                      <div className="mb-3 h-20 rounded-2xl bg-gradient-to-br from-violet-200 via-slate-100 to-sky-200" />
+                      <p className="text-[12px] font-bold text-violet-700">{c.University}</p>
+                      <p className="mt-0.5 line-clamp-2 text-[16px] leading-snug font-bold text-slate-900">{c.CourseName}</p>
+                    </Link>
                     <p className="mt-1.5 flex items-center gap-1 text-[12px] text-slate-500">
                       <MapPin size={11} /> {c.inst?.location?.city || 'UK'}
                       {c.miles != null && ` · ${c.miles} mi`}

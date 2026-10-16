@@ -36,8 +36,10 @@ export default function Saved() {
           const reach = reachFor(points, c)
           return (
             <Card key={k} className="!p-4">
-              <p className="text-[12px] font-bold text-violet-700">{c.University}</p>
-              <p className="mt-0.5 text-[17px] leading-snug font-bold text-slate-900">{c.CourseName}</p>
+              <Link to={`/next/course/${encodeURIComponent(k)}`} className="block">
+                <p className="text-[12px] font-bold text-violet-700">{c.University}</p>
+                <p className="mt-0.5 text-[17px] leading-snug font-bold text-slate-900">{c.CourseName}</p>
+              </Link>
               <p className="mt-1.5 flex items-center gap-1 text-[13px] text-slate-500">
                 <MapPin size={12} /> {inst?.location?.city || 'UK'}{inst?.miles != null && ` · ${inst.miles} mi`}
               </p>

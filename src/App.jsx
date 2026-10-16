@@ -6,6 +6,7 @@ import NextStart from './next/pages/Start'
 import NextExplore from './next/pages/Explore'
 import NextSaved from './next/pages/Saved'
 import NextMe from './next/pages/Me'
+import NextCourse from './next/pages/Course'
 import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Timeline from './pages/Timeline'
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="explore" element={<NextExplore />} />
         <Route path="shortlist" element={<NextSaved />} />
         <Route path="me" element={<NextMe />} />
+        <Route path="course/:key" element={<NextCourse />} />
       </Route>
     </Routes>
     </>
