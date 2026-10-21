@@ -26,6 +26,8 @@ import UniversityShortlist from './pages/UniversityShortlist'
 import UniversityApplications from './pages/UniversityApplications'
 import Profile from './pages/Profile'
 import DigitalCv from './pages/DigitalCv'
+import SponsoredContent from './pages/SponsoredContent'
+import SponsoredLog from './pages/SponsoredLog'
 
 export default function App() {
   return (
@@ -51,6 +53,8 @@ export default function App() {
         <Route path="/universities/institution/:name" element={<InstitutionDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/digital-cv" element={<DigitalCv />} />
+        <Route path="/sponsored/log" element={<SponsoredLog />} />
+        <Route path="/sponsored/:id" element={<SponsoredContent />} />
       </Route>
       <Route path="/next" element={<NextShell />}>
         <Route index element={<NextFeed />} />

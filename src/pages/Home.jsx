@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
-import { Clock, Lightbulb, Puzzle, Building2, Target, Compass, MapPin } from 'lucide-react'
+import { Clock, Lightbulb, Puzzle, Building2, Target, Compass, MapPin, Activity } from 'lucide-react'
 import { Card, PanelCard, Button, HoursCard, ImagePlaceholder } from '../components/ui'
+import { SponsoredPanel, SponsoredTile, SponsoredInline, useSponsored } from '../components/Sponsored'
+import { placement } from '../data/sponsored'
 
 const OPPORTUNITIES = [
   { name: 'Marketing Assistant Placement Opportunity', by: 'The Education Company', status: 'Rejected', deadline: '07/12/2025' },
@@ -14,7 +16,44 @@ const TIMELINE = [
   },
 ]
 
+/* Lifted out of Home so the three sponsored placements can each decide whether
+   the panel is replaced, pushed aside, or left alone. */
+function PanelCardOpportunities() {
+  return (
+    <PanelCard icon={Lightbulb} title="My Opportunities">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="bg-brand-50 text-left">
+            <th className="p-2 font-bold">Name</th>
+            <th className="p-2 font-bold">Offered by</th>
+            <th className="p-2 font-bold">Status</th>
+            <th className="p-2 font-bold">Application Deadline</th>
+            <th className="p-2" />
+          </tr>
+        </thead>
+        <tbody>
+          {OPPORTUNITIES.map((o) => (
+            <tr key={o.name} className="border-t border-dashed border-gray-300 align-top">
+              <td className="p-2 font-bold">{o.name}</td>
+              <td className="p-2">{o.by}</td>
+              <td className="p-2">{o.status}</td>
+              <td className="p-2">{o.deadline}</td>
+              <td className="p-2 text-right font-bold">View</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </PanelCard>
+  )
+}
+
 export default function Home() {
+  /* One advert per load, hosted by the Opportunities panel. Which of the three
+     placements it uses is a prototype control — see /sponsored/log. */
+  const { campaign, small, minimise, restore, dismiss } = useSponsored('opportunities')
+  const where = placement()
+  const showsHere = (p) => campaign && where === p
+
   return (
     <div className="space-y-6">
       <div className="grid gap-6 rounded-2xl bg-brand-100 p-6 lg:grid-cols-2">
@@ -51,6 +90,14 @@ export default function Home() {
           </Card>
         </div>
         <div>
+          {showsHere('welcome') && (
+            <div className="mb-5">
+              <SponsoredInline
+                campaign={campaign} small={small}
+                onMinimise={minimise} onRestore={restore} onDismiss={dismiss}
+              />
+            </div>
+          )}
           <h2 className="mb-3 text-2xl font-light text-gray-600">My Activity Hours</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <HoursCard title="Employer Engagement Hours" value={0} />
@@ -62,30 +109,27 @@ export default function Home() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <PanelCard icon={Lightbulb} title="My Opportunities">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-brand-50 text-left">
-                <th className="p-2 font-bold">Name</th>
-                <th className="p-2 font-bold">Offered by</th>
-                <th className="p-2 font-bold">Status</th>
-                <th className="p-2 font-bold">Application Deadline</th>
-                <th className="p-2" />
-              </tr>
-            </thead>
-            <tbody>
-              {OPPORTUNITIES.map((o) => (
-                <tr key={o.name} className="border-t border-dashed border-gray-300 align-top">
-                  <td className="p-2 font-bold">{o.name}</td>
-                  <td className="p-2">{o.by}</td>
-                  <td className="p-2">{o.status}</td>
-                  <td className="p-2">{o.deadline}</td>
-                  <td className="p-2 text-right font-bold">View</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </PanelCard>
+        {/* Takeover: the advert stands in for the panel. Minimised, the panel
+            comes back and the advert shrinks to its own tile beside it, rather
+            than sitting inside a panel it has nothing to do with. */}
+        {showsHere('takeover') && !small && (
+          <SponsoredPanel campaign={campaign} onMinimise={minimise} onDismiss={dismiss} />
+        )}
+        {showsHere('takeover') && small && (
+          <>
+            <PanelCardOpportunities />
+            <SponsoredTile campaign={campaign} onRestore={restore} onDismiss={dismiss} />
+          </>
+        )}
+        {showsHere('beside') && (
+          <>
+            <PanelCardOpportunities />
+            {small
+              ? <SponsoredTile campaign={campaign} onRestore={restore} onDismiss={dismiss} />
+              : <SponsoredPanel campaign={campaign} onMinimise={minimise} onDismiss={dismiss} />}
+          </>
+        )}
+        {!showsHere('takeover') && !showsHere('beside') && <PanelCardOpportunities />}
 
         <PanelCard icon={Clock} title="My Timeline" actionLabel="View Timeline">
           <p className="mb-2 text-sm font-bold">Latest activity</p>
@@ -147,6 +191,11 @@ export default function Home() {
           ))}
         </PanelCard>
       </div>
+
+      {/* Prototype furniture, not part of the student experience. */}
+      <Link to="/sponsored/log" className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-brand-600">
+        <Activity size={12} /> Sponsored resources — behaviour check
+      </Link>
     </div>
   )
 }

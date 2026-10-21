@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Money, explained">
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#15356b"/><stop offset="1" stop-color="#2f8f8a"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#b)"/>
+  <circle cx="520" cy="80" r="120" fill="#ffffff" opacity=".07"/>
+  <circle cx="90" cy="300" r="90" fill="#ffffff" opacity=".07"/>
+  <g transform="translate(286,96)" fill="none" stroke="#9fe6dd" stroke-width="9" stroke-linecap="round">
+    <circle cx="34" cy="34" r="34"/>
+    <path d="M34 14v40M24 26h16a8 8 0 010 16H28a8 8 0 000 16h16"/>
+  </g>
+  <text x="320" y="238" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="40" font-weight="700" fill="#fff">Money, explained</text>
+  <text x="320" y="276" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="20" fill="#cfeee9">Four short films about the money side of leaving college</text>
+</svg>
