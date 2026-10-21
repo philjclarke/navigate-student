@@ -7,9 +7,12 @@
   <rect width="640" height="360" fill="url(#b)"/>
   <circle cx="548" cy="70" r="150" fill="#49b6e0" opacity=".16"/>
   <circle cx="470" cy="300" r="110" fill="#ffffff" opacity=".07"/>
-  <g stroke="#9ad9f2" stroke-width="7" fill="none" opacity=".85">
+  <g stroke="#9ad9f2" stroke-width="7" fill="none" opacity=".85" stroke-linecap="round">
     <circle cx="468" cy="150" r="62"/>
-    <path d="M468 110v80M452 128h30a14 14 0 010 28h-26a14 14 0 000 28h30" stroke-linecap="round"/>
+    <!-- a pound sign, drawn rather than set, so it does not depend on a font -->
+    <path d="M487 130a21 21 0 00-35 16v39"/>
+    <path d="M440 185h56"/>
+    <path d="M440 162h30"/>
   </g>
   <g fill="#49b6e0" opacity=".5">
     <rect x="300" y="250" width="34" height="60" rx="6"/>
