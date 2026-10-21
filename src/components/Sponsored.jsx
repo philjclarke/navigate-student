@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Minus, X, Play, FileDown, FileText, Maximize2, ArrowRight, Megaphone, Clock, Film } from 'lucide-react'
+import { Minus, X, Play, FileDown, FileText, Maximize2, ArrowRight, Clock, Film } from 'lucide-react'
 import {
   pickCampaign, advanceRotation, isMinimised, setMinimised, setDismissed, logEvent, controls,
+  PROGRAMME,
 } from '../data/sponsored'
 
 /* Sponsored content is deliberately not skinned like Navigate. It carries the
@@ -36,6 +37,14 @@ export function useSponsored(host) {
     restore: () => { setMinimised(campaign.id, false); setSmall(false); logEvent(campaign.id, 'restored', {}) },
     dismiss: () => { setDismissed(campaign.id, true); setGone(true); logEvent(campaign.id, 'dismissed', {}) },
   }
+}
+
+function Hashtag({ campaign, className = 'text-xl' }) {
+  return (
+    <p className={`font-bold tracking-tight ${className}`} style={{ color: campaign.sponsor.accent }}>
+      {PROGRAMME.hashtag}
+    </p>
+  )
 }
 
 /* Named in words, not left to a logo: the audience is 16 to 18 and the
@@ -89,7 +98,12 @@ export function SponsoredPanel({ campaign, onMinimise, onDismiss }) {
 
       <div className="relative flex min-h-[270px] flex-col p-6">
         <div className="flex items-start justify-between gap-3">
-          <Partnership campaign={campaign} />
+          <div>
+            <Hashtag campaign={campaign} />
+            <div className="mt-2.5">
+              <Partnership campaign={campaign} />
+            </div>
+          </div>
           <Refusals onMinimise={onMinimise} onDismiss={onDismiss} />
         </div>
 
@@ -158,7 +172,7 @@ function metaFor(campaign) {
 export function SponsoredStrip({ campaign, small, onMinimise, onDismiss, onRestore }) {
   const nav = useNavigate()
   const { ink, accent } = campaign.sponsor
-  const Icon = META_ICON[campaign.template] || Megaphone
+  const Icon = META_ICON[campaign.template] || Film
   const open = () => { logEvent(campaign.id, 'advert-clicked', {}); nav(`/sponsored/${campaign.id}`) }
 
   if (small) {
@@ -190,13 +204,12 @@ export function SponsoredStrip({ campaign, small, onMinimise, onDismiss, onResto
       <div className="absolute inset-y-0 left-0 w-2" style={{ backgroundColor: accent }} />
 
       <div className="relative flex flex-wrap items-center gap-5 p-5 pl-7 md:gap-8 md:p-6 md:pl-9">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15 backdrop-blur">
-          <Megaphone size={22} />
-        </span>
-
         <div className="min-w-[15rem] flex-1">
-          <p className="text-[11px] font-bold tracking-wide text-white/70 uppercase">{campaign.sponsor.label}</p>
-          <h2 className="mt-1 text-2xl leading-tight font-bold tracking-tight">{campaign.banner.heading}</h2>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <Hashtag campaign={campaign} className="text-lg" />
+            <p className="text-[11px] font-bold tracking-wide text-white/60 uppercase">{campaign.sponsor.label}</p>
+          </div>
+          <h2 className="mt-1.5 text-2xl leading-tight font-bold tracking-tight">{campaign.banner.heading}</h2>
           <p className="mt-1.5 text-sm text-white/75">{campaign.banner.blurb}</p>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-white/60">
             <Icon size={14} /> {metaFor(campaign)}
@@ -252,7 +265,8 @@ export function SponsoredInline({ campaign, small, onMinimise, onDismiss, onRest
         </div>
       </div>
       <button onClick={open} className="block w-full p-4 text-left">
-        <p className="text-xl font-bold">{campaign.banner.heading}</p>
+        <Hashtag campaign={campaign} className="text-base" />
+        <p className="mt-1.5 text-xl font-bold">{campaign.banner.heading}</p>
         <p className="mt-1 text-sm text-white/75">{campaign.banner.blurb}</p>
         <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold" style={{ color: accent }}>
           {campaign.banner.cta} <ArrowRight size={14} />
