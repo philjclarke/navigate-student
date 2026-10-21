@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Clock, Plus, Bold, List, ListOrdered, Link2, Undo2, Indent, Outdent } from 'lucide-react'
-import { PageBanner, Card, Button, FauxSelect, ImagePlaceholder } from '../components/ui'
+import { PageBanner, Card, Button, FauxSelect } from '../components/ui'
+import timelineImg from '../assets/timeline-activity.png'
 import Flyout from '../components/Flyout'
 
 const ENTRIES = [
@@ -38,7 +39,7 @@ export default function Timeline() {
               </div>
               <p className="mt-2 text-sm text-gray-500">{e.body}</p>
             </div>
-            <ImagePlaceholder className="hidden h-24 w-36 shrink-0 sm:block" />
+            <img src={timelineImg} alt="" className="hidden h-24 w-36 shrink-0 rounded-lg object-cover sm:block" />
           </Card>
         ))}
       </div>

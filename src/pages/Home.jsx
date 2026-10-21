@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Clock, Lightbulb, Puzzle, Building2, Target, Compass, MapPin, Activity } from 'lucide-react'
-import { Card, PanelCard, Button, HoursCard, ImagePlaceholder } from '../components/ui'
+import { Card, PanelCard, Button, HoursCard } from '../components/ui'
 import opportunitiesImg from '../assets/opportunities.png'
+import timelineImg from '../assets/timeline-activity.png'
 import { SponsoredPanel, SponsoredTile, SponsoredInline, SponsoredStrip, useSponsored } from '../components/Sponsored'
 import { placement } from '../data/sponsored'
 
@@ -155,7 +156,7 @@ export default function Home() {
                 </div>
                 <p className="mt-2 text-sm text-gray-500">{t.body}</p>
               </div>
-              <ImagePlaceholder className="hidden h-24 w-32 shrink-0 sm:block" />
+              <img src={timelineImg} alt="" className="hidden h-24 w-32 shrink-0 rounded-lg object-cover sm:block" />
             </div>
           ))}
         </PanelCard>
