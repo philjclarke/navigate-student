@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Clock, Lightbulb, Puzzle, Building2, Target, Compass, MapPin, Activity } from 'lucide-react'
 import { Card, PanelCard, Button, HoursCard, ImagePlaceholder } from '../components/ui'
+import opportunitiesImg from '../assets/opportunities.png'
 import { SponsoredPanel, SponsoredTile, SponsoredInline, SponsoredStrip, useSponsored } from '../components/Sponsored'
 import { placement } from '../data/sponsored'
 
@@ -94,7 +95,11 @@ export default function Home() {
               </p>
               <Link to="/opportunities"><Button className="mt-3">Let's go!</Button></Link>
             </div>
-            <ImagePlaceholder className="hidden h-32 w-32 shrink-0 sm:block" />
+            <img
+              src={opportunitiesImg}
+              alt="A student holding a lightbulb"
+              className="-mb-5 hidden h-40 w-auto shrink-0 self-end sm:block"
+            />
           </Card>
         </div>
         <div>
@@ -108,10 +113,10 @@ export default function Home() {
           )}
           <h2 className="mb-3 text-2xl font-light text-gray-600">My Activity Hours</h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            <HoursCard title="Employer Engagement Hours" value={0} />
-            <HoursCard title="Enrichment Hours" value={5} />
-            <HoursCard title="Employer Confirmed Placement Hours" value={0} />
-            <HoursCard title="Student Confirmed Placement Hours" value={0} />
+            <HoursCard title="Employer Engagement Hours" value={12} completed={8} target={20} />
+            <HoursCard title="Enrichment Hours" value={5} completed={3} target={10} />
+            <HoursCard title="Employer Confirmed Placement Hours" value={24} completed={24} target={35} />
+            <HoursCard title="Student Confirmed Placement Hours" value={18} completed={14} target={35} />
           </div>
         </div>
       </div>

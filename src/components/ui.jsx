@@ -60,12 +60,24 @@ export function StatusPill({ children }) {
   )
 }
 
-export function ProgressRing({ value, label = 'Hours Completed', size = 96 }) {
+export function ProgressRing({ value, target, label = 'Hours Completed', size = 96 }) {
   const stroke = 12
   const r = (size - stroke) / 2
+  const c = 2 * Math.PI * r
+  /* Without a target there is nothing to be a proportion of, so the ring stays
+     a plain track rather than inventing a denominator. */
+  const pct = target ? Math.min(value / target, 1) : 0
   return (
-    <svg width={size} height={size} role="img" aria-label={`${value} ${label}`}>
+    <svg width={size} height={size} role="img" aria-label={`${value} ${label}${target ? ` of ${target}` : ''}`}>
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e5e7eb" strokeWidth={stroke} />
+      {pct > 0 && (
+        <circle
+          cx={size / 2} cy={size / 2} r={r} fill="none"
+          stroke="var(--color-brand-500)" strokeWidth={stroke} strokeLinecap="round"
+          strokeDasharray={`${c * pct} ${c}`}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      )}
       <text x="50%" y="46%" textAnchor="middle" className="fill-gray-700 text-xl font-extrabold">
         {value}
       </text>
@@ -76,15 +88,16 @@ export function ProgressRing({ value, label = 'Hours Completed', size = 96 }) {
   )
 }
 
-export function HoursCard({ title, value }) {
+export function HoursCard({ title, value, completed = value, target }) {
   return (
     <Card className="flex flex-col gap-3">
       <h3 className="border-b border-gray-100 pb-2 text-center text-sm font-bold text-gray-700">{title}</h3>
       <div className="flex items-center justify-around">
-        <ProgressRing value={value} />
+        <ProgressRing value={completed} target={target} />
         <div className="text-center">
           <p className="text-[11px] font-bold tracking-wide text-gray-500 uppercase">Hours Recorded</p>
           <p className="text-3xl font-extrabold text-gray-700">{value}</p>
+          {target && <p className="mt-0.5 text-[11px] text-gray-400">Target {target}</p>}
         </div>
       </div>
     </Card>
