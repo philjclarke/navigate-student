@@ -237,9 +237,16 @@ export default function SponsoredContent() {
             )}
           </div>
 
-          {/* A single download block has nothing to fill a column with, so it
-              ranges with the foot of the words rather than floating at the top. */}
-          <div ref={stage} className={`scroll-mt-6 ${campaign.template === 'download' ? 'lg:self-end' : ''}`}>
+          {/* How the resource meets the words differs by what it is. A video
+              holds the top of the panel. A single download block ranges with
+              the foot of the words. A column of body text starts level with
+              the title, so the two readable things share a line. */}
+          <div
+            ref={stage}
+            className={`scroll-mt-6 ${
+              campaign.template === 'download' ? 'lg:self-end' : ''
+            } ${campaign.template === 'article' ? 'lg:mt-16' : ''}`}
+          >
             {campaign.template === 'video' && (
               <>
                 <VideoStage
