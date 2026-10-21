@@ -103,7 +103,9 @@ export default function SponsoredLog() {
             /?placement={placement()}&amp;controls={controls()}
           </code>{' '}
           — the link sets it for them. Without it they get the default, which is
-          the Opportunities takeover.
+          the announcement strip. A browser that has been here before keeps
+          whatever was chosen last, so the link is the reliable way to land
+          someone on a particular option.
         </p>
       </Card>
 

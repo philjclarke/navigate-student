@@ -273,7 +273,7 @@ function choose(key, store, fallback, allowed) {
   } catch { return fallback }
 }
 
-export const placement = () => choose('placement', 'spon-placement', 'takeover', PLACEMENTS)
+export const placement = () => choose('placement', 'spon-placement', 'strip', PLACEMENTS)
 export const setPlacement = (v) => { try { localStorage.setItem('spon-placement', v) } catch { /* ignore */ } }
 
 /* ---------- what has been watched ----------
