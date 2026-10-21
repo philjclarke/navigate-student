@@ -202,22 +202,21 @@ export default function SponsoredContent() {
           style={{ background: `linear-gradient(160deg, ${ink}d9 0%, ${ink}f2 70%)` }} />
         <div className="absolute inset-x-0 bottom-0 h-1.5" style={{ backgroundColor: accent }} />
 
-        {/* The programme first, then who paid for it, then the content. */}
-        <div className="relative p-6 pb-0 md:p-8 md:pb-0 lg:p-10 lg:pb-0">
-          <p className="text-2xl font-bold tracking-tight" style={{ color: accent }}>
-            {PROGRAMME.hashtag}
-          </p>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <span className="rounded-full bg-white/15 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-white/90 uppercase backdrop-blur">
-              {campaign.sponsor.label}
-            </span>
-            <img src={campaign.sponsor.logoWhite} alt={campaign.sponsor.name} className="h-6 w-auto" />
-          </div>
-        </div>
-
         <div className="relative grid gap-8 p-6 md:p-8 lg:grid-cols-[2fr_3.4fr] lg:items-center lg:gap-10 lg:p-10">
+          {/* The programme first, then who paid for it, then the words. All in
+              this column, so the stage keeps the full height of the panel. */}
           <div>
-            <h1 className="text-4xl leading-[1.05] font-bold tracking-tight">{text?.heading}</h1>
+            <p className="text-2xl font-bold tracking-tight" style={{ color: accent }}>
+              {PROGRAMME.hashtag}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <span className="rounded-full bg-white/15 px-3 py-1.5 text-[10px] font-bold tracking-wide text-white/90 uppercase backdrop-blur">
+                {campaign.sponsor.label}
+              </span>
+              <img src={campaign.sponsor.logoWhite} alt={campaign.sponsor.name} className="h-5 w-auto" />
+            </div>
+
+            <h1 className="mt-5 text-4xl leading-[1.05] font-bold tracking-tight">{text?.heading}</h1>
             {text?.standfirst && (
               <p className="mt-4 text-lg leading-relaxed text-white/80">{text.standfirst}</p>
             )}
