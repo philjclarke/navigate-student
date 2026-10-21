@@ -4,5 +4,5 @@
   <rect width="640" height="360" fill="url(#g02)"/>
   <circle cx="500" cy="300" r="150" fill="#ffffff" opacity=".06"/>
   <circle cx="140" cy="60" r="110" fill="#252a5e" opacity=".35"/>
-<g stroke="#bcc4ff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"><circle cx="322" cy="180" r="84"/><path d="M322 96v84l56 34"/></g>
+<g stroke="#bcc4ff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"><circle cx="486" cy="180" r="84"/><path d="M486 96v84l56 34"/></g>
 </svg>
