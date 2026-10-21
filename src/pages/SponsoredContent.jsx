@@ -80,57 +80,43 @@ function VideoStage({ video, campaign, playing, onPlay }) {
   )
 }
 
-/* One chooser per film: what it is, why it is worth 15 seconds, and where the
-   student got to last time. The watched line is the beginning of the
-   gamification Jason is after — a record of what they have done, which is also
-   the only kind of progress this product uses elsewhere. */
-function FilmChooser({ video, campaign, active, onPick }) {
+/* One tab per film, sitting directly under the stage. Discreet on purpose:
+   the student is choosing a chapter, not browsing a catalogue. Each still
+   carries where they got to, which is the beginning of the gamification —
+   a record of what they have done, which is the only kind of progress this
+   product uses anywhere else. */
+function FilmTab({ video, campaign, index, active, onPick }) {
   const state = watched(campaign.id)[video.id]
   const done = state?.complete
   const partway = !done && state?.pct > 5
+  const { accent } = campaign.sponsor
 
   return (
-    <div className={`flex flex-col overflow-hidden rounded-2xl border bg-white transition-shadow ${
-      active ? 'border-gray-400 shadow-md' : 'border-gray-300'
-    }`}>
-      <button onClick={onPick} className="relative block" aria-label={`Play ${video.title}`}>
-        <img src={video.poster} alt="" className="aspect-video w-full object-cover" />
-        <span className="absolute inset-0 flex items-center justify-center bg-black/20">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90">
-            <Play size={17} className="ml-0.5 text-gray-800" fill="currentColor" />
-          </span>
+    <button
+      onClick={onPick}
+      aria-current={active}
+      className={`relative overflow-hidden rounded-lg px-3 py-2.5 text-left transition-colors ${
+        active ? 'bg-white/15' : 'bg-white/5 hover:bg-white/10'
+      }`}
+    >
+      <span className="absolute inset-x-0 top-0 h-0.5" style={{ backgroundColor: active ? accent : 'transparent' }} />
+      <span className="flex items-center gap-1.5">
+        <span className="text-[11px] font-bold text-white/40">{index + 1}</span>
+        {done && <CheckCircle2 size={12} className="text-emerald-400" />}
+        {partway && <Play size={10} className="text-white/50" fill="currentColor" />}
+      </span>
+      <span className="mt-0.5 block truncate text-[13px] font-bold text-white">{video.title}</span>
+      <span className="block truncate text-[11px] text-white/50">
+        {done
+          ? `Watched ${new Date(state.last).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`
+          : partway ? `${state.pct}% in` : video.length}
+      </span>
+      {partway && (
+        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white/15">
+          <span className="block h-full" style={{ width: `${state.pct}%`, backgroundColor: accent }} />
         </span>
-        {done && (
-          <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white">
-            <CheckCircle2 size={12} /> Watched
-          </span>
-        )}
-        {partway && (
-          <span className="absolute inset-x-0 bottom-0 h-1.5 bg-black/30">
-            <span className="block h-full bg-white/90" style={{ width: `${state.pct}%` }} />
-          </span>
-        )}
-      </button>
-
-      <div className="flex flex-1 flex-col p-4">
-        <p className="font-bold text-gray-700">{video.title}</p>
-        <p className="mt-1 text-sm text-gray-500">{video.blurb}</p>
-        <p className="mt-2 text-xs text-gray-400">
-          {done
-            ? `Watched ${new Date(state.last).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}`
-            : partway
-              ? `You stopped ${state.pct}% in`
-              : `${video.length} · not watched yet`}
-        </p>
-        <button
-          onClick={onPick}
-          className="mt-3 flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-lg text-sm font-bold text-white"
-          style={{ backgroundColor: campaign.sponsor.ink }}
-        >
-          {done ? <><RotateCcw size={14} /> Watch again</> : partway ? <><Play size={13} fill="currentColor" /> Keep watching</> : <><Play size={13} fill="currentColor" /> Watch</>}
-        </button>
-      </div>
-    </div>
+      )}
+    </button>
   )
 }
 
@@ -246,10 +232,20 @@ export default function SponsoredContent() {
 
           <div ref={stage} className="scroll-mt-6">
             {campaign.template === 'video' && (
-              <VideoStage
-                video={films[active]} campaign={campaign}
-                playing={playing} onPlay={() => play(active)}
-              />
+              <>
+                <VideoStage
+                  video={films[active]} campaign={campaign}
+                  playing={playing} onPlay={() => play(active)}
+                />
+                {films.length > 1 && (
+                  <div className="mt-2.5 grid gap-2 sm:grid-cols-3">
+                    {films.map((v, i) => (
+                      <FilmTab key={v.id} video={v} campaign={campaign} index={i}
+                        active={i === active} onPick={() => play(i)} />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
             {campaign.template === 'download' && <FileSlot slot={slot('file')} campaign={campaign} />}
             {campaign.template === 'article' && (
@@ -271,20 +267,6 @@ export default function SponsoredContent() {
           {TEMPLATES[campaign.template].name} template · campaign {campaign.id}
         </p>
       </section>
-
-      {films.length > 1 && (
-        <section>
-          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-2xl font-light text-gray-600">The three films</h2>
-            <p className="text-sm text-gray-500">Watch them in any order. We remember where you got to.</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {films.map((v, i) => (
-              <FilmChooser key={v.id} video={v} campaign={campaign} active={i === active} onPick={() => play(i)} />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Navigate's voice again: what the student is owed about who sees what
           they did here. The one block that should not look like the sponsor. */}
