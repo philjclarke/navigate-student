@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Clock, Lightbulb, Puzzle, Building2, Target, Compass, MapPin, Activity } from 'lucide-react'
 import { Card, PanelCard, Button, HoursCard, ImagePlaceholder } from '../components/ui'
-import { SponsoredPanel, SponsoredTile, SponsoredInline, useSponsored } from '../components/Sponsored'
+import { SponsoredPanel, SponsoredTile, SponsoredInline, SponsoredStrip, useSponsored } from '../components/Sponsored'
 import { placement } from '../data/sponsored'
 
 const OPPORTUNITIES = [
@@ -56,6 +56,14 @@ export default function Home() {
 
   return (
     <div className="space-y-6">
+      {/* Navigate's announcement strip pattern, above everything else. */}
+      {showsHere('strip') && (
+        <SponsoredStrip
+          campaign={campaign} small={small}
+          onMinimise={minimise} onRestore={restore} onDismiss={dismiss}
+        />
+      )}
+
       <div className="grid gap-6 rounded-2xl bg-brand-100 p-6 lg:grid-cols-2">
         <div className="flex flex-col gap-5">
           <div>

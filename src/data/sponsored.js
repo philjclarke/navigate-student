@@ -217,6 +217,7 @@ export const PLACEMENTS = {
   takeover: 'Takes over the Opportunities panel',
   beside: 'Sits alongside, as its own panel',
   welcome: 'Sits in the welcome banner',
+  strip: 'Announcement strip at the top',
 }
 export const placement = () => {
   try { return localStorage.getItem('spon-placement') || 'takeover' } catch { return 'takeover' }
