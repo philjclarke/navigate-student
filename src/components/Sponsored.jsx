@@ -39,6 +39,37 @@ export function useSponsored(host) {
   }
 }
 
+/* A glimpse of the thing itself: a frame from the first film, or a stand-in
+   for the deck or document behind a download. */
+function thumbFor(campaign) {
+  const video = campaign.slots.find((x) => x.type === 'video')
+  if (video) return { src: video.poster, play: true }
+  const file = campaign.slots.find((x) => x.type === 'file')
+  if (file) return { src: '/sponsored/thumb-document.svg', label: file.format }
+  return { src: campaign.banner.image }
+}
+
+function Thumb({ campaign, onClick, className = 'w-28 sm:w-36' }) {
+  const { src, play, label } = thumbFor(campaign)
+  return (
+    <button onClick={onClick} className={`group relative shrink-0 ${className}`} aria-label={campaign.banner.heading}>
+      <img src={src} alt="" className="aspect-video w-full rounded-lg object-cover ring-1 ring-white/20" />
+      {play && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 transition-transform group-hover:scale-110">
+            <Play size={13} className="ml-0.5 text-gray-800" fill="currentColor" />
+          </span>
+        </span>
+      )}
+      {label && (
+        <span className="absolute right-1 bottom-1 rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-white">
+          {label}
+        </span>
+      )}
+    </button>
+  )
+}
+
 function Hashtag({ campaign, className = 'text-xl' }) {
   return (
     <p className={`font-bold tracking-tight ${className}`} style={{ color: campaign.sponsor.accent }}>
@@ -107,16 +138,21 @@ export function SponsoredPanel({ campaign, onMinimise, onDismiss }) {
           <Refusals onMinimise={onMinimise} onDismiss={onDismiss} />
         </div>
 
-        <div className="mt-auto max-w-[26rem] pt-6">
-          <h2 className="text-3xl leading-tight font-bold tracking-tight">{campaign.banner.heading}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-white/80">{campaign.banner.blurb}</p>
-          <button
-            onClick={open}
-            className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-transform hover:scale-[1.02]"
-            style={{ backgroundColor: accent, color: ink }}
-          >
-            <Icon size={15} /> {campaign.banner.cta}
-          </button>
+        <div className="mt-auto flex max-w-[30rem] items-start gap-4 pt-6">
+          <Thumb campaign={campaign} onClick={open} className="hidden w-28 sm:block" />
+          <div>
+            <button onClick={open} className="block text-left">
+              <h2 className="text-2xl leading-tight font-bold tracking-tight hover:underline">{campaign.banner.heading}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-white/80">{campaign.banner.blurb}</p>
+            </button>
+            <button
+              onClick={open}
+              className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-transform hover:scale-[1.02]"
+              style={{ backgroundColor: accent, color: ink }}
+            >
+              <Icon size={15} /> {campaign.banner.cta}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -204,13 +240,17 @@ export function SponsoredStrip({ campaign, small, onMinimise, onDismiss, onResto
       <div className="absolute inset-y-0 left-0 w-2" style={{ backgroundColor: accent }} />
 
       <div className="relative flex flex-wrap items-center gap-5 p-5 pl-7 md:gap-8 md:p-6 md:pl-9">
+        <Thumb campaign={campaign} onClick={open} className="hidden w-32 sm:block" />
+
         <div className="min-w-[15rem] flex-1">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <Hashtag campaign={campaign} className="text-lg" />
             <p className="text-[11px] font-bold tracking-wide text-white/60 uppercase">{campaign.sponsor.label}</p>
           </div>
-          <h2 className="mt-1.5 text-2xl leading-tight font-bold tracking-tight">{campaign.banner.heading}</h2>
-          <p className="mt-1.5 text-sm text-white/75">{campaign.banner.blurb}</p>
+          <button onClick={open} className="block text-left">
+            <h2 className="mt-1.5 text-2xl leading-tight font-bold tracking-tight hover:underline">{campaign.banner.heading}</h2>
+            <p className="mt-1.5 text-sm text-white/75">{campaign.banner.blurb}</p>
+          </button>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-white/60">
             <Icon size={14} /> {metaFor(campaign)}
           </p>
