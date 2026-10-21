@@ -235,7 +235,7 @@ export const CONTROLS = {
   minimise: 'Minimise only',
   dismiss: 'Dismiss only',
 }
-export const controls = () => { try { return localStorage.getItem('spon-controls') || 'both' } catch { return 'both' } }
+export const controls = () => choose('controls', 'spon-controls', 'both', CONTROLS)
 export const setControls = (v) => { try { localStorage.setItem('spon-controls', v) } catch { /* ignore */ } }
 
 /* Placement is a prototype control, not part of the model: it exists so the
@@ -246,9 +246,18 @@ export const PLACEMENTS = {
   welcome: 'Sits in the welcome banner',
   strip: 'Announcement strip at the top',
 }
-export const placement = () => {
-  try { return localStorage.getItem('spon-placement') || 'takeover' } catch { return 'takeover' }
+/* The choice lives in localStorage, which is per browser profile — so a link
+   sent to someone else, or opened in a private window, would otherwise land on
+   the default. A query string wins and is then remembered: /?placement=strip */
+function choose(key, store, fallback, allowed) {
+  try {
+    const q = new URLSearchParams(window.location.search).get(key)
+    if (q && allowed[q]) { localStorage.setItem(store, q); return q }
+    return localStorage.getItem(store) || fallback
+  } catch { return fallback }
 }
+
+export const placement = () => choose('placement', 'spon-placement', 'takeover', PLACEMENTS)
 export const setPlacement = (v) => { try { localStorage.setItem('spon-placement', v) } catch { /* ignore */ } }
 
 /* ---------- what has been watched ----------

@@ -74,6 +74,16 @@ export default function SponsoredLog() {
           Minimised this session: {minimised().length ? minimised().join(', ') : 'none'}.
           Dismissed: {gone.length ? gone.join(', ') : 'none'}.
         </p>
+        {/* These choices live in this browser only, so a link has to carry
+            them to land the same way for somebody else. */}
+        <p className="text-xs text-gray-500">
+          To show someone a particular option, send them{' '}
+          <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[11px] text-gray-700">
+            /?placement={placement()}&amp;controls={controls()}
+          </code>{' '}
+          — the link sets it for them. Without it they get the default, which is
+          the Opportunities takeover.
+        </p>
       </Card>
 
       {/* What the sponsor would receive — counts only, never a student. */}
