@@ -4,15 +4,12 @@ import { ArrowLeft, FileDown, Info, Check } from 'lucide-react'
 import { Card } from '../components/ui'
 import { campaignById, logEvent, TEMPLATES } from '../data/sponsored'
 
-/* The content page runs on the partner's colours, not Navigate's, and breaks
-   out of the page padding so the hero reaches both edges. Each slot is typed
-   and the template fixes the order, so this renders what the campaign declares
-   rather than a bespoke layout per sponsor. Every interactive slot reports its
-   own engagement. */
-
-/* The layout wraps pages in horizontal padding. Undoing it here is what makes
-   the hero feel like somebody else's space rather than a panel in ours. */
-const BLEED = '-mx-4 md:-mx-8 xl:-mx-10'
+/* The content page runs on the partner's colours, not Navigate's, but it keeps
+   Navigate's furniture: the page margins and rounded panels that every other
+   screen uses. Nothing here runs edge to edge. Each slot is typed and the
+   template fixes the order, so this renders what the campaign declares rather
+   than a bespoke layout per sponsor. Every interactive slot reports its own
+   engagement. */
 
 function VideoSlot({ slot, campaign }) {
   const ref = useRef(null)
@@ -107,84 +104,78 @@ export default function SponsoredContent() {
   const { ink, accent } = campaign.sponsor
 
   return (
-    <div className={BLEED}>
-      {/* Hero: the partner's artwork, full width, with the partnership named
-          before anything else is read. */}
-      <header className="relative overflow-hidden text-white" style={{ backgroundColor: ink }}>
+    <div className="space-y-6">
+      <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-brand-600 hover:text-brand-700">
+        <ArrowLeft size={15} /> Back to home
+      </Link>
+
+      {/* Hero: the partner's artwork and type, inside Navigate's panel shape. */}
+      <header className="relative overflow-hidden rounded-2xl text-white" style={{ backgroundColor: ink }}>
         <img src={campaign.banner.image} alt="" aria-hidden
           className="absolute inset-0 h-full w-full object-cover opacity-70" />
         <div className="absolute inset-0"
           style={{ background: `linear-gradient(160deg, ${ink}d9 0%, ${ink}f2 70%)` }} />
         <div className="absolute inset-x-0 bottom-0 h-1.5" style={{ backgroundColor: accent }} />
 
-        <div className="relative mx-auto max-w-5xl px-4 pt-6 pb-14 md:px-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white/70 transition-colors hover:text-white">
-            <ArrowLeft size={15} /> Back to Navigate
-          </Link>
-
-          <div className="mt-10 flex flex-wrap items-center gap-4">
+        <div className="relative px-6 py-10 md:px-10 md:py-14">
+          <div className="flex flex-wrap items-center gap-4">
             <span className="rounded-full bg-white/15 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-white/90 uppercase backdrop-blur">
               {campaign.sponsor.label}
             </span>
             <img src={campaign.sponsor.logoWhite} alt={campaign.sponsor.name} className="h-7 w-auto" />
           </div>
 
-          <h1 className="mt-5 max-w-3xl text-4xl leading-[1.05] font-bold tracking-tight md:text-6xl">
+          <h1 className="mt-5 max-w-3xl text-4xl leading-[1.05] font-bold tracking-tight md:text-5xl">
             {text?.heading}
           </h1>
           {text?.standfirst && (
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/80">{text.standfirst}</p>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/80">{text.standfirst}</p>
           )}
         </div>
       </header>
 
-      <div className="bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-12 md:px-8">
-          {campaign.template === 'video' && <VideoSlot slot={slot('video')} campaign={campaign} />}
-          {campaign.template === 'download' && <FileSlot slot={slot('file')} campaign={campaign} />}
-          {campaign.template === 'article' && (
-            <article className="mx-auto max-w-2xl">
-              {slot('body')?.paragraphs.map((p, i) => (
-                <p
-                  key={p.slice(0, 24)}
-                  className={i === 0
-                    ? 'text-xl leading-relaxed text-gray-700 first-letter:float-left first-letter:mt-1 first-letter:mr-3 first-letter:text-6xl first-letter:leading-[0.8] first-letter:font-bold'
-                    : 'mt-5 text-lg leading-relaxed text-gray-600'}
-                  style={i === 0 ? { '--tw-first-letter-color': ink } : undefined}
-                >
-                  {p}
-                </p>
-              ))}
-            </article>
-          )}
-
-          <p className="mt-10 text-center text-xs text-gray-400">
-            {TEMPLATES[campaign.template].name} template · campaign {campaign.id}
-          </p>
-        </div>
-      </div>
-
-      {/* Back inside Navigate's voice: what the student is owed about who sees
-          what they did here. */}
-      <div className="border-t border-gray-200 bg-brand-50 px-4 py-10 md:px-8">
-        <div className="mx-auto max-w-3xl">
-          <div className="flex gap-3">
-            <Info size={20} className="mt-0.5 shrink-0 text-brand-600" />
-            <div className="text-sm text-gray-600">
-              <p className="font-bold text-gray-700">Why you are seeing this</p>
-              <p className="mt-1.5 leading-relaxed">
-                {campaign.sponsor.name} works with your college to put this together. Navigate chose
-                where it appears — they cannot see who you are, and they never will. They are told how
-                many students watched or downloaded something, not which ones.
+      <div className="rounded-2xl border border-gray-300 bg-white px-5 py-8 md:px-10 md:py-10">
+        {campaign.template === 'video' && <VideoSlot slot={slot('video')} campaign={campaign} />}
+        {campaign.template === 'download' && <FileSlot slot={slot('file')} campaign={campaign} />}
+        {campaign.template === 'article' && (
+          <article className="mx-auto max-w-2xl">
+            {slot('body')?.paragraphs.map((p, i) => (
+              <p
+                key={p.slice(0, 24)}
+                className={i === 0
+                  ? 'text-xl leading-relaxed text-gray-700'
+                  : 'mt-5 text-lg leading-relaxed text-gray-600'}
+              >
+                {p}
               </p>
-            </div>
-          </div>
-          <p className="mt-6 text-xs text-gray-400">
-            Prototype only. {campaign.sponsor.name} is an invented organisation and this material is
-            placeholder content, not advice.
-          </p>
-        </div>
+            ))}
+          </article>
+        )}
+
+        <p className="mt-8 text-center text-xs text-gray-400">
+          {TEMPLATES[campaign.template].name} template · campaign {campaign.id}
+        </p>
       </div>
+
+      {/* Navigate's voice again: what the student is owed about who sees what
+          they did here. The one block that should not look like the sponsor. */}
+      <Card className="bg-brand-50">
+        <div className="flex gap-3">
+          <Info size={20} className="mt-0.5 shrink-0 text-brand-600" />
+          <div className="text-sm text-gray-600">
+            <p className="font-bold text-gray-700">Why you are seeing this</p>
+            <p className="mt-1.5 leading-relaxed">
+              {campaign.sponsor.name} works with your college to put this together. Navigate chose
+              where it appears — they cannot see who you are, and they never will. They are told how
+              many students watched or downloaded something, not which ones.
+            </p>
+          </div>
+        </div>
+        <p className="mt-5 text-xs text-gray-400">
+          Prototype only. {campaign.sponsor.name} is an invented organisation and this material is
+          placeholder content, not advice.
+        </p>
+      </Card>
     </div>
   )
 }
