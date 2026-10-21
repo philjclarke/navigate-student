@@ -10,6 +10,10 @@
 
 export const STUDENT = { id: 'S-10482', name: 'Jason Gould' }
 
+/* The programme these resources sit under. Navigate's name for the strand,
+   not the sponsor's — it is what stays constant as partners come and go. */
+export const PROGRAMME = { hashtag: '#real&ready' }
+
 const SPONSOR = {
   name: 'Thameside Bank',
   logo: '/sponsored/sponsor-logo.svg',
