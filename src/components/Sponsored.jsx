@@ -163,19 +163,18 @@ export function SponsoredStrip({ campaign, small, onMinimise, onDismiss, onResto
 
   if (small) {
     return (
-      <div className="flex items-center gap-3 overflow-hidden rounded-2xl border border-gray-300 bg-white p-2.5 pl-0">
-        <span className="h-10 w-1.5 shrink-0 rounded-r" style={{ backgroundColor: accent }} />
-        <img src={campaign.banner.image} alt="" className="h-10 w-16 shrink-0 rounded-lg object-cover" />
+      <div className="flex items-center gap-3 overflow-hidden rounded-2xl p-2.5 text-white" style={{ backgroundColor: ink }}>
+        <img src={campaign.banner.image} alt="" className="h-11 w-20 shrink-0 rounded-lg object-cover" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-gray-700">{campaign.banner.heading}</p>
-          <p className="truncate text-[11px] text-gray-500">{campaign.sponsor.label}</p>
+          <p className="truncate text-sm font-bold">{campaign.banner.heading}</p>
+          <p className="truncate text-[11px] text-white/60">{campaign.sponsor.label}</p>
         </div>
-        <button onClick={onRestore} className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-bold text-brand-600 hover:bg-gray-50">
+        <button onClick={onRestore} className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold" style={{ color: accent }}>
           <Maximize2 size={13} /> Reopen
         </button>
         {controls() !== 'minimise' && (
           <button onClick={onDismiss} aria-label="Dismiss this advert"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-white/20 hover:text-white">
             <X size={16} />
           </button>
         )}
@@ -184,44 +183,35 @@ export function SponsoredStrip({ campaign, small, onMinimise, onDismiss, onResto
   }
 
   return (
-    <div className="relative flex flex-wrap items-center gap-5 overflow-hidden rounded-2xl border border-gray-300 bg-white p-5 pl-7">
-      <span className="absolute inset-y-0 left-0 w-2" style={{ backgroundColor: accent }} />
+    <div className="relative overflow-hidden rounded-2xl text-white" style={{ backgroundColor: ink }}>
+      <img src={campaign.banner.image} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0"
+        style={{ background: `linear-gradient(95deg, ${ink}f7 0%, ${ink}e8 45%, ${ink}66 100%)` }} />
+      <div className="absolute inset-y-0 left-0 w-2" style={{ backgroundColor: accent }} />
 
-      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-        style={{ backgroundColor: `${accent}22`, color: ink }}>
-        <Megaphone size={22} />
-      </span>
+      <div className="relative flex flex-wrap items-center gap-5 p-5 pl-7 md:gap-8 md:p-6 md:pl-9">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15 backdrop-blur">
+          <Megaphone size={22} />
+        </span>
 
-      <div className="min-w-[16rem] flex-1">
-        <h2 className="text-xl font-bold text-gray-700">{campaign.banner.heading}</h2>
-        <p className="mt-0.5 text-xs font-bold tracking-wide text-gray-500 uppercase">{campaign.sponsor.label}</p>
-        <p className="mt-2 text-sm text-gray-500">{campaign.banner.blurb}</p>
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-gray-500">
-          <Icon size={14} style={{ color: ink }} /> {metaFor(campaign)}
-        </p>
-      </div>
+        <div className="min-w-[15rem] flex-1">
+          <p className="text-[11px] font-bold tracking-wide text-white/70 uppercase">{campaign.sponsor.label}</p>
+          <h2 className="mt-1 text-2xl leading-tight font-bold tracking-tight">{campaign.banner.heading}</h2>
+          <p className="mt-1.5 text-sm text-white/75">{campaign.banner.blurb}</p>
+          <p className="mt-2 flex items-center gap-1.5 text-sm text-white/60">
+            <Icon size={14} /> {metaFor(campaign)}
+          </p>
+        </div>
 
-      <div className="flex items-center gap-2">
-        <button
-          onClick={open}
-          className="rounded-lg px-5 py-2.5 text-sm font-bold text-white transition-transform hover:scale-[1.02]"
-          style={{ backgroundColor: ink }}
-        >
-          {campaign.banner.cta}
-        </button>
-        <div className="flex gap-1">
-          {controls() !== 'dismiss' && (
-            <button onClick={onMinimise} title="Minimise — back next time you log in" aria-label="Minimise this advert"
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600">
-              <Minus size={16} />
-            </button>
-          )}
-          {controls() !== 'minimise' && (
-            <button onClick={onDismiss} title="Dismiss — do not show me this again" aria-label="Dismiss this advert"
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600">
-              <X size={16} />
-            </button>
-          )}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={open}
+            className="rounded-full px-5 py-2.5 text-sm font-bold transition-transform hover:scale-[1.02]"
+            style={{ backgroundColor: accent, color: ink }}
+          >
+            {campaign.banner.cta}
+          </button>
+          <Refusals onMinimise={onMinimise} onDismiss={onDismiss} />
         </div>
       </div>
     </div>
