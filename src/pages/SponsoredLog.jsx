@@ -76,6 +76,27 @@ export default function SponsoredLog() {
         </p>
         {/* These choices live in this browser only, so a link has to carry
             them to land the same way for somebody else. */}
+        <div>
+          <p className="text-sm font-bold text-gray-700">Pin a campaign on the home page</p>
+          <p className="mt-1 text-xs text-gray-500">
+            Rotation picks one per load. These links fix it, so a demo always opens on the same one.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {CAMPAIGNS.map((c) => (
+              <a
+                key={c.id}
+                href={`/?campaign=${c.id}&placement=${placement()}`}
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50"
+              >
+                {c.banner.heading} <span className="text-gray-400">({c.template})</span>
+              </a>
+            ))}
+            <a href={`/?placement=${placement()}`} className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50">
+              Back to rotation
+            </a>
+          </div>
+        </div>
+
         <p className="text-xs text-gray-500">
           To show someone a particular option, send them{' '}
           <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[11px] text-gray-700">

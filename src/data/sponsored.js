@@ -194,12 +194,28 @@ const ses = {
    development quietly skips a campaign every load. The pointer moves once the
    advert has actually been shown. */
 export function pickCampaign(host = null) {
+  /* Naming a campaign in the URL pins it: /?campaign=cmp-002. It overrides
+     audience, dates and dismissal too, because the point is to show a
+     particular piece of work to someone, not to simulate a student. Unlike
+     placement it is not remembered — rotation returns as soon as the
+     parameter goes. */
+  const pinned = pinnedCampaign()
+  if (pinned) return pinned
+
   const list = eligibleCampaigns(STUDENT.id, host)
   if (!list.length) return null
   return list[ses.get('spon-rotation', 0) % list.length]
 }
 
+export function pinnedCampaign() {
+  try {
+    const q = new URLSearchParams(window.location.search).get('campaign')
+    return q ? CAMPAIGNS.find((c) => c.id === q) || null : null
+  } catch { return null }
+}
+
 export function advanceRotation() {
+  if (pinnedCampaign()) return
   ses.set('spon-rotation', ses.get('spon-rotation', 0) + 1)
 }
 
