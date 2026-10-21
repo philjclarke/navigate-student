@@ -31,8 +31,8 @@ function VideoSlot({ slot, campaign }) {
   }
 
   return (
-    <figure className="mx-auto max-w-4xl">
-      <div className="overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/10">
+    <figure>
+      <div className="overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/15">
         <video
           ref={ref}
           src={slot.src}
@@ -47,7 +47,7 @@ function VideoSlot({ slot, campaign }) {
           onEnded={() => mark('video-complete')}
         />
       </div>
-      <figcaption className="mt-3 text-center text-sm text-gray-500">{slot.title} · {slot.length}</figcaption>
+      <figcaption className="mt-3 text-sm text-white/60">{slot.title} · {slot.length}</figcaption>
     </figure>
   )
 }
@@ -56,7 +56,7 @@ function FileSlot({ slot, campaign }) {
   const [got, setGot] = useState(false)
   const { ink, accent } = campaign.sponsor
   return (
-    <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-6 rounded-2xl p-7 text-white shadow-xl" style={{ backgroundColor: ink }}>
+    <div className="flex flex-wrap items-center justify-between gap-6 rounded-xl bg-white/10 p-7 ring-1 ring-white/15">
       <div className="flex items-center gap-5">
         <div className="flex h-20 w-16 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/20">
           <FileDown size={26} style={{ color: accent }} />
@@ -109,53 +109,53 @@ export default function SponsoredContent() {
         <ArrowLeft size={15} /> Back to home
       </Link>
 
-      {/* Hero: the partner's artwork and type, inside Navigate's panel shape. */}
-      <header className="relative overflow-hidden rounded-2xl text-white" style={{ backgroundColor: ink }}>
+      {/* One panel, not two: the resource sits beside the pitch rather than
+          adrift beneath it, and takes the larger share of the row. Stacks on
+          anything narrower than a laptop. */}
+      <section className="relative overflow-hidden rounded-2xl text-white" style={{ backgroundColor: ink }}>
         <img src={campaign.banner.image} alt="" aria-hidden
           className="absolute inset-0 h-full w-full object-cover opacity-70" />
         <div className="absolute inset-0"
           style={{ background: `linear-gradient(160deg, ${ink}d9 0%, ${ink}f2 70%)` }} />
         <div className="absolute inset-x-0 bottom-0 h-1.5" style={{ backgroundColor: accent }} />
 
-        <div className="relative px-6 py-10 md:px-10 md:py-14">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="rounded-full bg-white/15 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-white/90 uppercase backdrop-blur">
-              {campaign.sponsor.label}
-            </span>
-            <img src={campaign.sponsor.logoWhite} alt={campaign.sponsor.name} className="h-7 w-auto" />
+        <div className="relative grid gap-8 p-6 md:p-8 lg:grid-cols-[2fr_3.4fr] lg:items-center lg:gap-10 lg:p-10">
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="rounded-full bg-white/15 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-white/90 uppercase backdrop-blur">
+                {campaign.sponsor.label}
+              </span>
+              <img src={campaign.sponsor.logoWhite} alt={campaign.sponsor.name} className="h-6 w-auto" />
+            </div>
+
+            <h1 className="mt-5 text-4xl leading-[1.05] font-bold tracking-tight">{text?.heading}</h1>
+            {text?.standfirst && (
+              <p className="mt-4 text-lg leading-relaxed text-white/80">{text.standfirst}</p>
+            )}
           </div>
 
-          <h1 className="mt-5 max-w-3xl text-4xl leading-[1.05] font-bold tracking-tight md:text-5xl">
-            {text?.heading}
-          </h1>
-          {text?.standfirst && (
-            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-white/80">{text.standfirst}</p>
-          )}
+          <div>
+            {campaign.template === 'video' && <VideoSlot slot={slot('video')} campaign={campaign} />}
+            {campaign.template === 'download' && <FileSlot slot={slot('file')} campaign={campaign} />}
+            {campaign.template === 'article' && (
+              <article className="rounded-xl bg-white p-6 ring-1 ring-white/15 md:p-8">
+                {slot('body')?.paragraphs.map((p, i) => (
+                  <p key={p.slice(0, 24)}
+                    className={i === 0
+                      ? 'text-lg leading-relaxed text-gray-700'
+                      : 'mt-4 leading-relaxed text-gray-600'}>
+                    {p}
+                  </p>
+                ))}
+              </article>
+            )}
+          </div>
         </div>
-      </header>
 
-      <div className="rounded-2xl border border-gray-300 bg-white px-5 py-8 md:px-10 md:py-10">
-        {campaign.template === 'video' && <VideoSlot slot={slot('video')} campaign={campaign} />}
-        {campaign.template === 'download' && <FileSlot slot={slot('file')} campaign={campaign} />}
-        {campaign.template === 'article' && (
-          <article className="mx-auto max-w-2xl">
-            {slot('body')?.paragraphs.map((p, i) => (
-              <p
-                key={p.slice(0, 24)}
-                className={i === 0
-                  ? 'text-xl leading-relaxed text-gray-700'
-                  : 'mt-5 text-lg leading-relaxed text-gray-600'}
-              >
-                {p}
-              </p>
-            ))}
-          </article>
-        )}
-
-        <p className="mt-8 text-center text-xs text-gray-400">
+        <p className="relative px-6 pb-5 text-xs text-white/40 md:px-8 lg:px-10">
           {TEMPLATES[campaign.template].name} template · campaign {campaign.id}
         </p>
-      </div>
+      </section>
 
       {/* Navigate's voice again: what the student is owed about who sees what
           they did here. The one block that should not look like the sponsor. */}
