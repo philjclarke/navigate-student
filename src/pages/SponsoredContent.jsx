@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, FileDown, Info, Check } from 'lucide-react'
+import { ArrowLeft, FileDown, Info, Check, Play, RotateCcw, CheckCircle2 } from 'lucide-react'
 import { Card } from '../components/ui'
-import { campaignById, logEvent, TEMPLATES } from '../data/sponsored'
+import { campaignById, logEvent, TEMPLATES, watched, markWatch } from '../data/sponsored'
 
 /* The content page runs on the partner's colours, not Navigate's, but it keeps
    Navigate's furniture: the page margins and rounded panels that every other
@@ -11,16 +11,20 @@ import { campaignById, logEvent, TEMPLATES } from '../data/sponsored'
    than a bespoke layout per sponsor. Every interactive slot reports its own
    engagement. */
 
-function VideoSlot({ slot, campaign }) {
+/* The stage. A poster that becomes a player on click — the same mechanism we
+   would need for a YouTube or Vimeo facade, so the interaction does not change
+   if hosting ever moves. What changes is how much we can see: hosted here, we
+   get play, quarters and completion; embedded elsewhere, the click is all. */
+function VideoStage({ video, campaign, playing, onPlay }) {
   const ref = useRef(null)
   const hit = useRef(new Set())
 
-  /* Local hosting is what makes this honest: with a third party embed we could
-     log "pressed play" and nothing else. */
-  const mark = (action, detail = {}) => {
+  useEffect(() => { hit.current = new Set() }, [video.id])
+
+  const mark = (action, extra = {}) => {
     if (hit.current.has(action)) return
     hit.current.add(action)
-    logEvent(campaign.id, 'interaction', { action, ...detail })
+    logEvent(campaign.id, 'interaction', { action, video: video.id, title: video.title, ...extra })
   }
 
   const onTime = () => {
@@ -28,27 +32,105 @@ function VideoSlot({ slot, campaign }) {
     if (!v || !v.duration) return
     const pct = (v.currentTime / v.duration) * 100
     for (const m of [25, 50, 75]) if (pct >= m) mark(`video-${m}`)
+    markWatch(campaign.id, video.id, { pct })
+  }
+
+  if (!playing) {
+    return (
+      <button
+        onClick={onPlay}
+        className="group relative block w-full overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/15"
+        aria-label={`Play ${video.title}`}
+      >
+        <img src={video.poster} alt="" className="aspect-video w-full object-cover" />
+        <span className="absolute inset-0 flex items-center justify-center bg-black/25 transition-colors group-hover:bg-black/15">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-lg transition-transform group-hover:scale-105">
+            <Play size={26} className="ml-1 text-gray-800" fill="currentColor" />
+          </span>
+        </span>
+        <span className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent px-4 py-3 text-left">
+          <span className="block text-base font-bold text-white">{video.title}</span>
+          <span className="block text-xs text-white/70">{video.length}</span>
+        </span>
+      </button>
+    )
   }
 
   return (
-    <figure>
-      <div className="overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/15">
-        <video
-          ref={ref}
-          src={slot.src}
-          poster={slot.poster}
-          controls
-          playsInline
-          preload="metadata"
-          className="block w-full bg-black"
-          onPlay={() => logEvent(campaign.id, 'interaction', { action: 'video-play' })}
-          onPause={() => logEvent(campaign.id, 'interaction', { action: 'video-pause' })}
-          onTimeUpdate={onTime}
-          onEnded={() => mark('video-complete')}
-        />
+    <div className="overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/15">
+      <video
+        ref={ref}
+        key={video.id}
+        src={video.src}
+        poster={video.poster}
+        controls
+        autoPlay
+        playsInline
+        preload="metadata"
+        className="block aspect-video w-full bg-black"
+        onPlay={() => logEvent(campaign.id, 'interaction', { action: 'video-play', video: video.id, title: video.title })}
+        onPause={() => logEvent(campaign.id, 'interaction', { action: 'video-pause', video: video.id })}
+        onTimeUpdate={onTime}
+        onEnded={() => {
+          mark('video-complete')
+          markWatch(campaign.id, video.id, { pct: 100, complete: true })
+        }}
+      />
+    </div>
+  )
+}
+
+/* One chooser per film: what it is, why it is worth 15 seconds, and where the
+   student got to last time. The watched line is the beginning of the
+   gamification Jason is after — a record of what they have done, which is also
+   the only kind of progress this product uses elsewhere. */
+function FilmChooser({ video, campaign, active, onPick }) {
+  const state = watched(campaign.id)[video.id]
+  const done = state?.complete
+  const partway = !done && state?.pct > 5
+
+  return (
+    <div className={`flex flex-col overflow-hidden rounded-2xl border bg-white transition-shadow ${
+      active ? 'border-gray-400 shadow-md' : 'border-gray-300'
+    }`}>
+      <button onClick={onPick} className="relative block" aria-label={`Play ${video.title}`}>
+        <img src={video.poster} alt="" className="aspect-video w-full object-cover" />
+        <span className="absolute inset-0 flex items-center justify-center bg-black/20">
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90">
+            <Play size={17} className="ml-0.5 text-gray-800" fill="currentColor" />
+          </span>
+        </span>
+        {done && (
+          <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white">
+            <CheckCircle2 size={12} /> Watched
+          </span>
+        )}
+        {partway && (
+          <span className="absolute inset-x-0 bottom-0 h-1.5 bg-black/30">
+            <span className="block h-full bg-white/90" style={{ width: `${state.pct}%` }} />
+          </span>
+        )}
+      </button>
+
+      <div className="flex flex-1 flex-col p-4">
+        <p className="font-bold text-gray-700">{video.title}</p>
+        <p className="mt-1 text-sm text-gray-500">{video.blurb}</p>
+        <p className="mt-2 text-xs text-gray-400">
+          {done
+            ? `Watched ${new Date(state.last).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}`
+            : partway
+              ? `You stopped ${state.pct}% in`
+              : `${video.length} · not watched yet`}
+        </p>
+        <button
+          onClick={onPick}
+          className="mt-3 flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-lg text-sm font-bold text-white"
+          style={{ backgroundColor: campaign.sponsor.ink }}
+        >
+          {done ? <><RotateCcw size={14} /> Watch again</> : partway ? <><Play size={13} fill="currentColor" /> Keep watching</> : <><Play size={13} fill="currentColor" /> Watch</>}
+        </button>
       </div>
-      <figcaption className="mt-3 text-sm text-white/60">{slot.title} · {slot.length}</figcaption>
-    </figure>
+    </div>
   )
 }
 
@@ -83,6 +165,9 @@ export default function SponsoredContent() {
   const { id } = useParams()
   const campaign = campaignById(id)
   const logged = useRef(false)
+  const [active, setActive] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const stage = useRef(null)
 
   useEffect(() => {
     if (!campaign || logged.current) return
@@ -100,8 +185,20 @@ export default function SponsoredContent() {
   }
 
   const slot = (type) => campaign.slots.find((s) => s.type === type)
+  const slots = (type) => campaign.slots.filter((s) => s.type === type)
   const text = slot('text')
+  const films = slots('video')
   const { ink, accent } = campaign.sponsor
+
+  const seen = films.filter((v) => watched(campaign.id)[v.id]?.complete).length
+  const play = (i) => {
+    setActive(i)
+    setPlaying(true)
+    logEvent(campaign.id, 'interaction', { action: 'video-selected', video: films[i].id })
+    /* The stage is above the choosers, so picking from down here would start a
+       film the student cannot see. */
+    stage.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 
   return (
     <div className="space-y-6">
@@ -132,10 +229,28 @@ export default function SponsoredContent() {
             {text?.standfirst && (
               <p className="mt-4 text-lg leading-relaxed text-white/80">{text.standfirst}</p>
             )}
+            {text?.reason && (
+              <div className="mt-5 border-l-2 pl-4" style={{ borderColor: accent }}>
+                <p className="text-[11px] font-bold tracking-wide text-white/60 uppercase">Why watch this</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-white/75">{text.reason}</p>
+              </div>
+            )}
+            {films.length > 1 && (
+              <p className="mt-5 text-sm font-semibold text-white/70">
+                {seen === films.length
+                  ? `All ${films.length} watched`
+                  : `${seen} of ${films.length} watched`}
+              </p>
+            )}
           </div>
 
-          <div>
-            {campaign.template === 'video' && <VideoSlot slot={slot('video')} campaign={campaign} />}
+          <div ref={stage} className="scroll-mt-6">
+            {campaign.template === 'video' && (
+              <VideoStage
+                video={films[active]} campaign={campaign}
+                playing={playing} onPlay={() => play(active)}
+              />
+            )}
             {campaign.template === 'download' && <FileSlot slot={slot('file')} campaign={campaign} />}
             {campaign.template === 'article' && (
               <article className="rounded-xl bg-white p-6 ring-1 ring-white/15 md:p-8">
@@ -156,6 +271,20 @@ export default function SponsoredContent() {
           {TEMPLATES[campaign.template].name} template · campaign {campaign.id}
         </p>
       </section>
+
+      {films.length > 1 && (
+        <section>
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-2xl font-light text-gray-600">The three films</h2>
+            <p className="text-sm text-gray-500">Watch them in any order. We remember where you got to.</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {films.map((v, i) => (
+              <FilmChooser key={v.id} video={v} campaign={campaign} active={i === active} onPick={() => play(i)} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Navigate's voice again: what the student is owed about who sees what
           they did here. The one block that should not look like the sponsor. */}

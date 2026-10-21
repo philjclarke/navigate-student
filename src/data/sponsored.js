@@ -48,22 +48,45 @@ export const CAMPAIGNS = [
     banner: {
       image: '/sponsored/campaign-money.svg',
       heading: 'Money, explained',
-      blurb: 'Four short films about the money side of leaving college — pay, tax, rent and what a credit score actually is.',
-      cta: 'Watch the first film',
+      blurb: 'Three short films about the money side of leaving college — pay, bills and what a credit score actually is.',
+      cta: 'Watch the films',
     },
     slots: [
       { type: 'logo', src: SPONSOR.logo, alt: SPONSOR.name },
       {
         type: 'text',
         heading: 'Money, explained',
-        standfirst: 'Nobody really teaches this bit. Four short films on what happens to your money once you start earning.',
+        standfirst: 'Nobody really teaches this bit. Three short films on what happens to your money once you start earning.',
+        /* Jason asked for a reason to watch, separate from the strapline. It
+           answers "why me, why now" rather than describing the content. */
+        reason: 'Most people meet their first payslip, their first bills and their first credit check in the same year, usually with no warning. Fifteen minutes here will save you working it out the expensive way.',
       },
       {
         type: 'video',
-        src: '/sponsored/money-basics.mp4',
-        poster: '/sponsored/campaign-money.svg',
-        title: 'Money, explained — part one',
-        length: '20 seconds',
+        id: 'v1',
+        src: '/sponsored/money-01-pay.mp4',
+        poster: '/sponsored/poster-01.svg',
+        title: 'Pay and tax',
+        blurb: 'Gross, net, and where the difference goes.',
+        length: '15 seconds',
+      },
+      {
+        type: 'video',
+        id: 'v2',
+        src: '/sponsored/money-02-bills.mp4',
+        poster: '/sponsored/poster-02.svg',
+        title: 'Bills and budgeting',
+        blurb: 'The five bills, and a budget that survives a month.',
+        length: '15 seconds',
+      },
+      {
+        type: 'video',
+        id: 'v3',
+        src: '/sponsored/money-03-credit.mp4',
+        poster: '/sponsored/poster-03.svg',
+        title: 'Credit and borrowing',
+        blurb: 'What a credit score is, and what it is not.',
+        length: '15 seconds',
       },
     ],
   },
@@ -223,6 +246,34 @@ export const placement = () => {
   try { return localStorage.getItem('spon-placement') || 'takeover' } catch { return 'takeover' }
 }
 export const setPlacement = (v) => { try { localStorage.setItem('spon-placement', v) } catch { /* ignore */ } }
+
+/* ---------- what has been watched ----------
+
+   Derived state, kept separately from the log so a cleared log does not wipe
+   a student's progress, and so "watched on" can be answered without replaying
+   every event. Gamification, if it comes, hangs off this. */
+
+const WATCH = 'spon-watched'
+
+export function watched(campaignId) {
+  return loc.get(WATCH, {})[campaignId] || {}
+}
+
+export function markWatch(campaignId, videoId, { pct, complete }) {
+  const all = loc.get(WATCH, {})
+  const mine = all[campaignId] || {}
+  const prev = mine[videoId] || {}
+  mine[videoId] = {
+    started: prev.started || new Date().toISOString(),
+    last: new Date().toISOString(),
+    pct: Math.max(prev.pct || 0, Math.round(pct || 0)),
+    complete: prev.complete || !!complete,
+  }
+  loc.set(WATCH, { ...all, [campaignId]: mine })
+}
+
+export const watchedCount = (campaignId, videos) =>
+  videos.filter((v) => watched(campaignId)[v.id]?.complete).length
 
 /* ---------- engagement log ---------- */
 

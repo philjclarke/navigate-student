@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Film artwork">
+  <defs><linearGradient id="g02" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#0b1f3f"/><stop offset="1" stop-color="#4752b8"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#g02)"/>
+  <circle cx="500" cy="300" r="150" fill="#ffffff" opacity=".06"/>
+  <circle cx="140" cy="60" r="110" fill="#252a5e" opacity=".35"/>
+<g stroke="#bcc4ff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"><circle cx="322" cy="180" r="84"/><path d="M322 96v84l56 34"/></g>
+</svg>
