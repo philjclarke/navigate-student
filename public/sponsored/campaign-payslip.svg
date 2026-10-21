@@ -1,20 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Reading your first payslip">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Abstract artwork of a payslip">
   <defs>
     <linearGradient id="p" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2d2a66"/><stop offset="1" stop-color="#6c5ce0"/>
+      <stop offset="0" stop-color="#0b1f3f"/><stop offset="1" stop-color="#3b4fa0"/>
     </linearGradient>
   </defs>
   <rect width="640" height="360" fill="url(#p)"/>
-  <g transform="translate(252,60)">
-    <rect width="136" height="168" rx="10" fill="#fff" opacity=".95"/>
-    <g fill="#6c5ce0" opacity=".65">
-      <rect x="18" y="24" width="72" height="9" rx="4.5"/>
-      <rect x="18" y="50" width="100" height="7" rx="3.5"/>
-      <rect x="18" y="68" width="100" height="7" rx="3.5"/>
-      <rect x="18" y="86" width="74" height="7" rx="3.5"/>
-      <rect x="18" y="116" width="100" height="12" rx="6"/>
+  <circle cx="560" cy="300" r="140" fill="#49b6e0" opacity=".14"/>
+  <g transform="rotate(-7 470 170)">
+    <rect x="396" y="46" width="168" height="230" rx="12" fill="#ffffff" opacity=".93"/>
+    <g fill="#3b4fa0" opacity=".55">
+      <rect x="420" y="76" width="86" height="11" rx="5.5"/>
+      <rect x="420" y="112" width="120" height="8" rx="4"/>
+      <rect x="420" y="134" width="120" height="8" rx="4"/>
+      <rect x="420" y="156" width="92" height="8" rx="4"/>
+      <rect x="420" y="178" width="120" height="8" rx="4"/>
+      <rect x="420" y="216" width="120" height="16" rx="8"/>
     </g>
   </g>
-  <text x="320" y="282" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="36" font-weight="700" fill="#fff">Reading your first payslip</text>
-  <text x="320" y="318" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="19" fill="#d9d3ff">A one page guide to what gets taken off, and why</text>
+  <g stroke="#9ad9f2" stroke-width="6" fill="none" opacity=".5" stroke-linecap="round">
+    <path d="M70 290h150M70 250h110M70 210h70"/>
+  </g>
 </svg>

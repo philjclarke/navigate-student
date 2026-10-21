@@ -13,6 +13,13 @@ export const STUDENT = { id: 'S-10482', name: 'Jason Gould' }
 const SPONSOR = {
   name: 'Thameside Bank',
   logo: '/sponsored/sponsor-logo.svg',
+  logoWhite: '/sponsored/sponsor-logo-white.svg',
+  /* The sponsor's own colours. Sponsored content is skinned to the partner
+     rather than to Navigate: it has to be recognisable as somebody else's
+     voice the moment it appears, which is both a design and a disclosure
+     requirement. */
+  ink: '#0b1f3f',
+  accent: '#49b6e0',
   /* The wording Phil settled on: partnership, not advertising. Shown as text on
      the banner and with the logo on the content page. */
   label: 'In partnership with Thameside Bank',

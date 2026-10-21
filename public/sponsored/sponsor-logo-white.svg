@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" role="img" aria-label="Thameside Bank">
+  <rect x="2" y="12" width="40" height="40" rx="10" fill="#ffffff" fill-opacity=".16"/>
+  <path d="M12 42c6-14 12-14 18 0" stroke="#9ad9f2" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="22" cy="24" r="4" fill="#9ad9f2"/>
+  <text x="56" y="39" font-family="Helvetica,Arial,sans-serif" font-size="23" font-weight="700" fill="#ffffff">Thameside</text>
+  <text x="196" y="39" font-family="Helvetica,Arial,sans-serif" font-size="23" font-weight="300" fill="#ffffff" fill-opacity=".85">Bank</text>
+</svg>
