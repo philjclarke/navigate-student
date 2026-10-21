@@ -202,7 +202,7 @@ export default function SponsoredContent() {
           style={{ background: `linear-gradient(160deg, ${ink}d9 0%, ${ink}f2 70%)` }} />
         <div className="absolute inset-x-0 bottom-0 h-1.5" style={{ backgroundColor: accent }} />
 
-        <div className="relative grid gap-8 p-6 md:p-8 lg:grid-cols-[2fr_3.4fr] lg:items-center lg:gap-10 lg:p-10">
+        <div className="relative grid gap-8 p-6 md:p-8 lg:grid-cols-[2fr_3.4fr] lg:items-start lg:gap-10 lg:p-10">
           {/* The programme first, then who paid for it, then the words. All in
               this column, so the stage keeps the full height of the panel. */}
           <div>
