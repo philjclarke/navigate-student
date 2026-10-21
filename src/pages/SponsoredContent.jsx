@@ -216,7 +216,9 @@ export default function SponsoredContent() {
               <img src={campaign.sponsor.logoWhite} alt={campaign.sponsor.name} className="h-5 w-auto" />
             </div>
 
-            <h1 className="mt-5 text-4xl leading-[1.05] font-bold tracking-tight">{text?.heading}</h1>
+            {/* The hashtag and partnership read as a lockup at the top; the
+                gap is what separates the programme from the piece itself. */}
+            <h1 className="mt-8 text-4xl leading-[1.05] font-bold tracking-tight lg:mt-16">{text?.heading}</h1>
             {text?.standfirst && (
               <p className="mt-4 text-lg leading-relaxed text-white/80">{text.standfirst}</p>
             )}
