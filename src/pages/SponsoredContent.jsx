@@ -237,7 +237,9 @@ export default function SponsoredContent() {
             )}
           </div>
 
-          <div ref={stage} className="scroll-mt-6">
+          {/* A single download block has nothing to fill a column with, so it
+              ranges with the foot of the words rather than floating at the top. */}
+          <div ref={stage} className={`scroll-mt-6 ${campaign.template === 'download' ? 'lg:self-end' : ''}`}>
             {campaign.template === 'video' && (
               <>
                 <VideoStage
